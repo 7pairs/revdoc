@@ -31,7 +31,7 @@ public class Arguments {
     private String outputFile;
 
     /* テンプレートファイル名 */
-    @Option(name = "-t", aliases = "template")
+    @Option(name = "-t", aliases = "--template")
     private String templateFile;
 
     /**

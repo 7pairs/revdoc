@@ -16,16 +16,17 @@
 package blue.lions.revdoc;
 
 import static org.assertj.core.api.Assertions.*;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-class ArgumentsTest {
+public class ArgumentsTest {
 
     @Test
     @DisplayName("getInputDirectory() : -i オプションを指定したとき、指定した値が取得できること。")
-    void getInputDirectory_SpecifyIOption_ReturnOptionValue() {
+    public void getInputDirectory_SpecifyIOption_ReturnOptionValue() {
         final String EXPECTED = "./articles";
 
         String[] args = new String[] {"-i", EXPECTED};
@@ -36,7 +37,7 @@ class ArgumentsTest {
 
     @Test
     @DisplayName("getInputDirectory() : --input オプションを指定したとき、指定した値が取得できること。")
-    void getInputDirectory_SpecifyInputOption_ReturnOptionValue() {
+    public void getInputDirectory_SpecifyInputOption_ReturnOptionValue() {
         final String EXPECTED = "./articles";
 
         String[] args = new String[] {"--input", EXPECTED};
@@ -47,7 +48,7 @@ class ArgumentsTest {
 
     @Test
     @DisplayName("getOutputFile() : -o オプションを指定したとき、指定した値が取得できること。")
-    void getOutputFile_SpecifyOOption_ReturnOptionValue() {
+    public void getOutputFile_SpecifyOOption_ReturnOptionValue() {
         final String EXPECTED = "output.docx";
 
         String[] args = new String[] {"-o", EXPECTED};
@@ -58,7 +59,7 @@ class ArgumentsTest {
 
     @Test
     @DisplayName("getOutputFile() : --output オプションを指定したとき、指定した値が取得できること。")
-    void getOutputFile_SpecifyOutputOption_ReturnOptionValue() {
+    public void getOutputFile_SpecifyOutputOption_ReturnOptionValue() {
         final String EXPECTED = "output.docx";
 
         String[] args = new String[] {"--output", EXPECTED};
@@ -69,7 +70,7 @@ class ArgumentsTest {
 
     @Test
     @DisplayName("getTemplateFile() : -t オプションを指定したとき、指定した値が取得できること。")
-    void getTemplateFile_SpecifyTOption_ReturnOptionValue() {
+    public void getTemplateFile_SpecifyTOption_ReturnOptionValue() {
         final String EXPECTED = "template.docx";
 
         String[] args = new String[] {"-t", EXPECTED};
@@ -80,7 +81,7 @@ class ArgumentsTest {
 
     @Test
     @DisplayName("getTemplateFile() : --template オプションを指定したとき、指定した値が取得できること。")
-    void getTemplateFile_SpecifyTemplateOption_ReturnOptionValue() {
+    public void getTemplateFile_SpecifyTemplateOption_ReturnOptionValue() {
         final String EXPECTED = "template.docx";
 
         String[] args = new String[] {"--template", EXPECTED};
@@ -90,24 +91,24 @@ class ArgumentsTest {
     }
 
     /*
-     * コマンドライン引数をパースし、結果を引数オブジェクトとして返す。
+     * コマンドライン引数をパースし、結果を {@code Arguments} に変換する。
      *
      * @param args コマンドライン引数
-     * @return 引数オブジェクト
+     * @return パース結果
      */
     private Arguments parseArguments(String... args) {
-        // 引数オブジェクト / 引数のパーサー
+        // パース結果格納用
         Arguments arguments = new Arguments();
-        CmdLineParser cmdLineParser = new CmdLineParser(arguments);
 
         // コマンドライン引数をパースする
+        CmdLineParser cmdLineParser = new CmdLineParser(arguments);
         try {
             cmdLineParser.parseArgument(args);
         } catch (CmdLineException e) {
             e.printStackTrace();
         }
 
-        // 引数オブジェクトを返す
+        // パース結果を返す
         return arguments;
     }
 }

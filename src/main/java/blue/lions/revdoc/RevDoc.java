@@ -27,6 +27,8 @@ import org.parboiled.support.ParsingResult;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * revdocのメインクラス。
@@ -40,7 +42,7 @@ public class RevDoc {
      */
     public static void main(String... args) {
         // コマンドライン引数をパースする
-        Arguments arguments = parseArgument(args);
+        Arguments arguments = parseArguments(args);
 
         Config config = parseConfig(arguments.getInputDirectory());
 
@@ -66,7 +68,7 @@ public class RevDoc {
      * @param args コマンドライン引数
      * @return コマンドライン引数オブジェクト
      */
-    private static Arguments parseArgument(String... args) {
+    private static Arguments parseArguments(String... args) {
         Arguments arguments = new Arguments();
         CmdLineParser cmdLineParser = new CmdLineParser(arguments);
         try {
@@ -78,6 +80,13 @@ public class RevDoc {
     }
 
     private static Config parseConfig(String configPath) {
-        return new Config();
+        return null;
+//        try {
+//            String yamlString = Files.readString(Paths.get(configPath));
+//            return new Config(yamlString);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return new Config("");
+//        }
     }
 }

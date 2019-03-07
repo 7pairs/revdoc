@@ -16,19 +16,10 @@
 package blue.lions.revdoc;
 
 import blue.lions.revdoc.ast.Node;
-import blue.lions.revdoc.parser.ReviewParser;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import blue.lions.revdoc.reader.Reader;
+import blue.lions.revdoc.writer.Writer;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
-import org.parboiled.Parboiled;
-import org.parboiled.parserunners.ReportingParseRunner;
-import org.parboiled.support.ParsingResult;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /**
  * revdocのメインクラス。
@@ -36,57 +27,26 @@ import java.nio.file.Paths;
 public class RevDoc {
 
     /**
-     * メイン処理。
+     * revdocのエントリーポイント。
      *
      * @param args コマンドライン引数
      */
     public static void main(String... args) {
         // コマンドライン引数をパースする
-        Arguments arguments = parseArguments(args);
-
-        Config config = parseConfig(arguments.getInputDirectory());
-
-        try {
-            String input = "= 見出し\n\n1行目\n2行目\n\n2段落目\n";
-            ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-            ParsingResult<Node> result = new ReportingParseRunner<Node>(reviewParser.Root()).run(input);
-
-            XWPFDocument document = new XWPFDocument();
-            result.resultValue.export(document);
-            FileOutputStream fout = new FileOutputStream("~/test.docx");
-            document.write(fout);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /*
-     * コマンドライン引数をパースして @{code Arguments} に格納する。
-     *
-     * @param args コマンドライン引数
-     * @return コマンドライン引数オブジェクト
-     */
-    private static Arguments parseArguments(String... args) {
-        Arguments arguments = new Arguments();
-        CmdLineParser cmdLineParser = new CmdLineParser(arguments);
+        CommandLineArguments commandLineArguments = new CommandLineArguments();
+        CmdLineParser cmdLineParser = new CmdLineParser(commandLineArguments);
         try {
             cmdLineParser.parseArgument(args);
         } catch (CmdLineException e) {
             e.printStackTrace();
         }
-        return arguments;
-    }
 
-    private static Config parseConfig(String configPath) {
-        return null;
-//        try {
-//            String yamlString = Files.readString(Paths.get(configPath));
-//            return new Config(yamlString);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return new Config("");
-//        }
+        // リーダーを実行する
+        Reader reader = Reader.getInstance(commandLineArguments);
+        Node ast = reader.run();
+
+        // ライターを実行する
+        Writer writer = Writer.getInstance(commandLineArguments);
+        writer.run(ast);
     }
 }

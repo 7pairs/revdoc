@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc;
+package blue.lions.revdoc.reader.review;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * config.ymlの情報を格納するクラス。
  */
-public class Config {
+class ReviewConfig {
 
     /**
      * 発行年月の情報を格納するクラス。
@@ -98,11 +98,11 @@ public class Config {
     private String rights;
 
     /**
-     * {@code Config} オブジェクトを構築する。
+     * {@code ReviewConfig} オブジェクトを構築する。
      *
      * @param yamlString YAML文字列
      */
-    public Config(String yamlString) {
+    public ReviewConfig(String yamlString) {
         // YAMLをパースする
         Yaml yaml = new Yaml();
         Map config = yaml.loadAs(yamlString, Map.class);
@@ -199,7 +199,7 @@ public class Config {
      * @return パース結果
      */
     private List<String> parsePeople(Object data) {
-        // null は変換しない
+        // nullは変換しない
         if (data == null) {
             return null;
         }
@@ -234,7 +234,7 @@ public class Config {
      * @return 変換後の {@code LocalDate} オブジェクト
      */
     private LocalDate dateToLocalDate(Date date) {
-        // null は変換しない
+        // nullは変換しない
         if (date == null) {
             return null;
         }
@@ -254,7 +254,7 @@ public class Config {
      * @return パース結果
      */
     private List<List<HistoryItem>> parseHistory(List<List> history) {
-        // null は変換しない
+        // nullは変換しない
         if (history == null) {
             return null;
         }

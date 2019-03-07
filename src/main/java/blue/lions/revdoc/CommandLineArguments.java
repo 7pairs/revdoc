@@ -20,47 +20,47 @@ import org.kohsuke.args4j.Option;
 /**
  * コマンドライン引数を格納するクラス。
  */
-public class Arguments {
+public class CommandLineArguments {
 
-    /* 入力ディレクトリ名 */
+    /* 入力ディレクトリパス */
     @Option(name = "-i", aliases = "--input")
-    private String inputDirectory;
+    private String inputDirectoryPath;
 
-    /* 出力ファイル名 */
+    /* 出力ファイルパス */
     @Option(name = "-o", aliases = "--output")
-    private String outputFile;
+    private String outputFilePath;
 
-    /* テンプレートファイル名 */
+    /* テンプレートファイルパス */
     @Option(name = "-t", aliases = "--template")
-    private String templateFile;
+    private String templateFilePath;
 
     /**
-     * 入力ディレクトリ名を取得する。
+     * 入力ディレクトリパスを取得する。
      *
-     * @return 入力ディレクトリ名
+     * @return 入力ディレクトリパス
      */
-    public String getInputDirectory() {
-        // 入力ディレクトリ名を返す
-        return inputDirectory;
+    public String getInputDirectoryPath() {
+        // 入力ディレクトリパスを返す
+        return inputDirectoryPath;
     }
 
     /**
-     * 出力ファイル名を取得する。
+     * 出力ファイルパスを取得する。
      *
-     * @return 出力ファイル名
+     * @return 出力ファイルパス
      */
-    public String getOutputFile() {
-        // 出力ファイル名を返す
-        return outputFile;
+    public String getOutputFilePath() {
+        // 出力ファイルパスを返す
+        return outputFilePath;
     }
 
     /**
-     * テンプレートファイル名を取得する。
+     * テンプレートファイルパスを取得する。
      *
-     * @return テンプレートファイル名
+     * @return テンプレートファイルパス
      */
-    public String getTemplateFile() {
-        // テンプレートファイル名を返す
-        return templateFile;
+    public String getTemplateFilePath() {
+        // テンプレートファイルパスを返す
+        return templateFilePath;
     }
 }

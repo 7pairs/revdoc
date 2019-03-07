@@ -1,0 +1,40 @@
+package blue.lions.revdoc.reader.review;
+
+import blue.lions.revdoc.CommandLineArguments;
+import blue.lions.revdoc.ast.Node;
+import blue.lions.revdoc.reader.Reader;
+import org.parboiled.Parboiled;
+import org.parboiled.parserunners.ReportingParseRunner;
+import org.parboiled.support.ParsingResult;
+
+public class ReviewReader extends Reader {
+
+    private CommandLineArguments commandLineArguments;
+
+    public ReviewReader(CommandLineArguments commandLineArguments) {
+        this.commandLineArguments = commandLineArguments;
+    }
+
+    @Override
+    public Node run() {
+        ReviewConfig reviewConfig = parseConfig(commandLineArguments.getInputDirectoryPath());
+
+        String input = "= 見出し\n\n1行目\n2行目\n\n2段落目\n";
+        ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
+        ParsingResult<Node> result = new ReportingParseRunner<Node>(reviewParser.Root()).run(input);
+
+        return result.resultValue;
+    }
+
+    private static ReviewConfig parseConfig(String configPath) {
+        return null;
+//        try {
+//            String yamlString = Files.readString(Paths.get(configPath));
+//            return new ReviewConfig(yamlString);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return new ReviewConfig("");
+//        }
+    }
+
+}

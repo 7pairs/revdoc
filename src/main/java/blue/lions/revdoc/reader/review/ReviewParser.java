@@ -1,4 +1,4 @@
-package blue.lions.revdoc.parser;
+package blue.lions.revdoc.reader.review;
 
 import blue.lions.revdoc.ast.Heading1Node;
 import blue.lions.revdoc.ast.Node;
@@ -9,7 +9,7 @@ import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 
 @BuildParseTree
-public class ReviewParser extends BaseParser<Object> {
+class ReviewParser extends BaseParser<Object> {
 
     public Rule Root() {
         return Sequence(

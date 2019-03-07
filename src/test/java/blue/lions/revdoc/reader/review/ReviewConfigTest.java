@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc;
+package blue.lions.revdoc.reader.review;
 
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ConfigTest {
+public class ReviewConfigTest {
 
     @Test
     @DisplayName("getBookName() : YAML のキーに bookname が存在するとき、対応する値が取得できること。")
@@ -28,9 +28,9 @@ public class ConfigTest {
         final String EXPECTED = "hobopy";
 
         String yaml = String.format("bookname: %s", EXPECTED);
-        Config config = new Config(yaml);
+        ReviewConfig reviewConfig = new ReviewConfig(yaml);
 
-        assertThat(config.getBookName()).isEqualTo(EXPECTED);
+        assertThat(reviewConfig.getBookName()).isEqualTo(EXPECTED);
     }
 
     @Test
@@ -39,8 +39,8 @@ public class ConfigTest {
         final String EXPECTED = "ほぼPythonだけでサーバーレスアプリをつくろう";
 
         String yaml = String.format("booktitle: %s", EXPECTED);
-        Config config = new Config(yaml);
+        ReviewConfig reviewConfig = new ReviewConfig(yaml);
 
-        assertThat(config.getBookTitle()).isEqualTo(EXPECTED);
+        assertThat(reviewConfig.getBookTitle()).isEqualTo(EXPECTED);
     }
 }

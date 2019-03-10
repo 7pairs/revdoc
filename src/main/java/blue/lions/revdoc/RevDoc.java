@@ -18,8 +18,6 @@ package blue.lions.revdoc;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.reader.Reader;
 import blue.lions.revdoc.writer.Writer;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
 
 /**
  * revdocのメインクラス。
@@ -33,20 +31,14 @@ public class RevDoc {
      */
     public static void main(String... args) {
         // コマンドライン引数をパースする
-        CommandLineArguments commandLineArguments = new CommandLineArguments();
-        CmdLineParser cmdLineParser = new CmdLineParser(commandLineArguments);
-        try {
-            cmdLineParser.parseArgument(args);
-        } catch (CmdLineException e) {
-            e.printStackTrace();
-        }
+        Arguments arguments = Arguments.parse(args);
 
-        // リーダーを実行する
-        Reader reader = Reader.getInstance(commandLineArguments);
+        // 原稿ファイルを解析する
+        Reader reader = Reader.getInstance(arguments);
         Node ast = reader.run();
 
-        // ライターを実行する
-        Writer writer = Writer.getInstance(commandLineArguments);
+        // 原稿ファイルの内容を出力する
+        Writer writer = Writer.getInstance(arguments);
         writer.run(ast);
     }
 }

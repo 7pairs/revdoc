@@ -1,6 +1,6 @@
 package blue.lions.revdoc.reader.review;
 
-import blue.lions.revdoc.CommandLineArguments;
+import blue.lions.revdoc.Arguments;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.reader.Reader;
 import org.parboiled.Parboiled;
@@ -9,15 +9,15 @@ import org.parboiled.support.ParsingResult;
 
 public class ReviewReader extends Reader {
 
-    private CommandLineArguments commandLineArguments;
+    private Arguments arguments;
 
-    public ReviewReader(CommandLineArguments commandLineArguments) {
-        this.commandLineArguments = commandLineArguments;
+    public ReviewReader(Arguments arguments) {
+        this.arguments = arguments;
     }
 
     @Override
     public Node run() {
-        ReviewConfig reviewConfig = parseConfig(commandLineArguments.getInputDirectoryPath());
+        ReviewConfig reviewConfig = parseConfig(arguments.getInputDirectoryPath());
 
         String input = "= 見出し\n\n1行目\n2行目\n\n2段落目\n";
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);

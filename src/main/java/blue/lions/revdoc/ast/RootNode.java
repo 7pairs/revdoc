@@ -1,4 +1,4 @@
 package blue.lions.revdoc.ast;
 
-public class RootNode extends Node {
+public class RootNode extends ParentNode {
 }

@@ -1,6 +1,7 @@
 package blue.lions.revdoc.reader.review;
 
 import blue.lions.revdoc.ast.Heading1Node;
+import blue.lions.revdoc.ast.ParentNode;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.ParagraphNode;
 import blue.lions.revdoc.ast.RootNode;
@@ -11,21 +12,21 @@ import org.parboiled.annotations.BuildParseTree;
 @BuildParseTree
 class ReviewParser extends BaseParser<Object> {
 
-    public Rule Root() {
+    Rule Root() {
         return Sequence(
             push(new RootNode()),
             ZeroOrMore(Block(), appendChild())
         );
     }
 
-    public Rule Block() {
+    Rule Block() {
         return Sequence(
             ZeroOrMore(BlankLine()),
             FirstOf(Heading1(), Paragraph())
         );
     }
 
-    public Rule Heading1() {
+    Rule Heading1() {
         return Sequence(
             "= ",
             OneOrMore(NormalCharacter()),
@@ -34,7 +35,7 @@ class ReviewParser extends BaseParser<Object> {
         );
     }
 
-    public Rule Paragraph() {
+    Rule Paragraph() {
         return Sequence(
             OneOrMore(
                 OneOrMore(NormalCharacter()),
@@ -45,7 +46,7 @@ class ReviewParser extends BaseParser<Object> {
         );
     }
 
-    public Rule NormalCharacter() {
+    Rule NormalCharacter() {
         return Sequence(
             TestNot(' '),
             TestNot(AnyOf("\n\r")),
@@ -53,20 +54,20 @@ class ReviewParser extends BaseParser<Object> {
         );
     }
 
-    public Rule Newline() {
+    Rule Newline() {
         return FirstOf('\n', Sequence('\r', Optional('\n')));
     }
 
-    public Rule BlankLine() {
+    Rule BlankLine() {
         return Sequence(
             ZeroOrMore(' '),
             Newline()
         );
     }
 
-    public boolean appendChild() {
+    boolean appendChild() {
         Node child = (Node) pop();
-        Node parent = (Node) peek();
+        ParentNode parent = (ParentNode) peek();
         parent.appendChild(child);
         return true;
     }

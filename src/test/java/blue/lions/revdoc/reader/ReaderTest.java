@@ -15,32 +15,23 @@
  */
 package blue.lions.revdoc.reader;
 
+import static org.assertj.core.api.Assertions.*;
+
 import blue.lions.revdoc.Arguments;
-import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.reader.review.ReviewReader;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-/**
- * すべてのリーダーのベースクラス。
- */
-public abstract class Reader {
+public class ReaderTest {
 
-    /**
-     * コマンドライン引数に対応したリーダーを取得する。
-     *
-     * 現時点では {@code ReviewReader} を固定で返している。
-     *
-     * @param arguments コマンドライン引数
-     * @return リーダー
-     */
-    public static Reader getInstance(Arguments arguments) {
-        // ReviewReaderを返す
-        return new ReviewReader(arguments);
+    @Test
+    @DisplayName("getInstance : 条件なし : ReviewReaderを返すこと")
+    public void getInstance_None_ReturnReviewReader() {
+        final Class EXPECTED = ReviewReader.class;
+
+        Arguments arguments = Arguments.parse();
+        Reader reader = Reader.getInstance(arguments);
+
+        assertThat(reader).isInstanceOf(EXPECTED);
     }
-
-    /**
-     * 原稿ファイルを解析し、抽象構文木を構築する。
-     *
-     * @return 抽象構文木
-     */
-    public abstract Node run();
 }

@@ -1,11 +1,13 @@
 package blue.lions.revdoc.ast;
 
-public class Heading1Node extends Node {
+public class Heading1Node extends ParentNode {
 
-    private String text;
+    public Heading1Node(TextNode textNode) {
+        super(textNode);
+    }
 
-    public Heading1Node(String text) {
-        super();
-        this.text = text;
+    @Override
+    public void accept(Visitor visitor) {
+
     }
 }

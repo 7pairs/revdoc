@@ -1,6 +1,6 @@
 package blue.lions.revdoc.ast;
 
-public class RootNode extends ParentNode {
+public class ChapterNode extends ParentNode {
 
     @Override
     public void accept(Visitor visitor) {

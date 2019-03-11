@@ -2,10 +2,12 @@ package blue.lions.revdoc.ast;
 
 public class ParagraphNode extends ParentNode {
 
-    private String text;
+    public ParagraphNode(TextNode textNode) {
+        super(textNode);
+    }
 
-    public ParagraphNode(String text) {
-        super();
-        this.text = text;
+    @Override
+    public void accept(Visitor visitor) {
+
     }
 }

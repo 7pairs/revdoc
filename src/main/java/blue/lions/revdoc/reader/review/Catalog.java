@@ -15,7 +15,10 @@
  */
 package blue.lions.revdoc.reader.review;
 
+import org.yaml.snakeyaml.Yaml;
+
 import java.util.List;
+import java.util.Map;
 
 /*
  * catalog.ymlの情報を格納するクラス。
@@ -33,4 +36,21 @@ class Catalog {
 
     /* 後付 */
     private List<String> postdef;
+
+    /*
+     * {@code Catalog} オブジェクトを構築する。
+     *
+     * @param yamlString YAML文字列
+     */
+    Catalog(String yamlString) {
+        // YAMLをパースする
+        Yaml yaml = new Yaml();
+        Map catalog = yaml.loadAs(yamlString, Map.class);
+
+        // フィールドを初期化する
+        predef = (List<String>) catalog.get("PREDEF");
+        chapters = (List<List<String>>) catalog.get("CHAPS");
+        appendix = (List<String>) catalog.get("APPENDIX");
+        postdef = (List<String>) catalog.get("POSTDEF");
+    }
 }

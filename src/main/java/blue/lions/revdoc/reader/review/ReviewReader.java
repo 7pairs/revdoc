@@ -17,7 +17,7 @@ public class ReviewReader extends Reader {
 
     @Override
     public Node run() {
-        ReviewConfig reviewConfig = parseConfig(arguments.getInputDirectoryPath());
+        Config config = parseConfig(arguments.getInputDirectoryPath());
 
         String input = "= 見出し\n\n1行目\n2行目\n\n2段落目\n";
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
@@ -26,14 +26,14 @@ public class ReviewReader extends Reader {
         return result.resultValue;
     }
 
-    private static ReviewConfig parseConfig(String configPath) {
+    private static Config parseConfig(String configPath) {
         return null;
 //        try {
 //            String yamlString = Files.readString(Paths.get(configPath));
-//            return new ReviewConfig(yamlString);
+//            return new Config(yamlString);
 //        } catch (IOException e) {
 //            e.printStackTrace();
-//            return new ReviewConfig("");
+//            return new Config("");
 //        }
     }
 

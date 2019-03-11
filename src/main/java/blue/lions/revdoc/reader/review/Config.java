@@ -30,7 +30,7 @@ import java.util.Map;
 /*
  * config.ymlの情報を格納するクラス。
  */
-class ReviewConfig {
+class Config {
 
     /*
      * 発行年月の情報を格納するクラス。
@@ -98,11 +98,11 @@ class ReviewConfig {
     private String rights;
 
     /*
-     * {@code ReviewConfig} オブジェクトを構築する。
+     * {@code Config} オブジェクトを構築する。
      *
      * @param yamlString YAML文字列
      */
-    ReviewConfig(String yamlString) {
+    Config(String yamlString) {
         // YAMLをパースする
         Yaml yaml = new Yaml();
         Map config = yaml.loadAs(yamlString, Map.class);
@@ -112,7 +112,7 @@ class ReviewConfig {
         bookTitle = (String) config.get("booktitle");
         authors = parsePeople(config.get("aut"));
         covers = parsePeople(config.get("cov"));
-        date = dateToLocalDate((Date) config.get("date"));
+        date = convertIntoLocalDate(config.get("date"));
         history = parseHistory((List<List>) config.get("history"));
         rights = (String) config.get("rights");
     }
@@ -192,8 +192,11 @@ class ReviewConfig {
      *
      * 以下のパターンに対応している。
      *   1. "著者 太郎"
-     *   2. ["著者 太郎", "著者 次郎", ...]
-     *   3. [{name: "著者 太郎", file-as: "チョシャ タロウ"}, {name: "著者 次郎", file-as: "チョシャ ジロウ"}, ...]
+     *   2. 著者 太郎
+     *   3. ["著者 太郎", "著者 次郎", ...]
+     *   4. [著者 太郎, 著者 次郎, ...]
+     *   5. [{name: "著者 太郎", file-as: "チョシャ タロウ"}, {name: "著者 次郎", file-as: "チョシャ ジロウ"}, ...]
+     *   6. [{name: 著者 太郎, file-as: チョシャ タロウ}, {name: 著者 次郎, file-as: チョシャ ジロウ}, ...]
      *
      * @param data 人物情報
      * @return パース結果
@@ -209,15 +212,15 @@ class ReviewConfig {
 
         // 人物情報をパースする
         if (data instanceof String) {
-            // パターン1の場合
+            // パターン1, 2の場合
             people.add((String) data);
         } else if (data instanceof List) {
             for (Object person : (List) data) {
                 if (person instanceof String) {
-                    // パターン2の場合
+                    // パターン3, 4の場合
                     people.add((String) person);
                 } else if (person instanceof Map) {
-                    // パターン3の場合
+                    // パターン5, 6の場合
                     String name = (String) ((Map) person).get("name");
                     if (name != null) {
                         people.add(name);
@@ -231,19 +234,21 @@ class ReviewConfig {
     }
 
     /*
-     * {@code Date} を {@code LocalDate} に変換する。
+     * 指定された日付を {@code LocalDate} に変換する。
      *
-     * @param date 変換元の {@code Date}
+     * @param date 変換元の {@code Date} もしくは {@code String}
      * @return 変換後の {@code LocalDate}
      */
-    private LocalDate dateToLocalDate(Date date) {
-        // nullが指定された場合はそのまま返す
-        if (date == null) {
-            return null;
+    private LocalDate convertIntoLocalDate(Object date) {
+        // 日付をLocalDateに変換する
+        if (date instanceof Date) {
+            return Instant.ofEpochMilli(((Date) date).getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        } else if (date instanceof String) {
+            return LocalDate.parse((String) date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }
 
-        // DateをLocalDateに変換する
-        return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        // 変換できなかった場合はnullを返す
+        return null;
     }
 
     /*
@@ -251,7 +256,9 @@ class ReviewConfig {
      *
      * 以下のパターンに対応している。
      *   1. [["2018-10-08", "2018-12-30", ...], ["2019-04-14", ...], ...]
-     *   2. [["2018-10-08 技術書典5", "2018-12-30 C95", ...], ["2019-04-14 技術書典6", ...], ...]
+     *   2. [[2018-10-08, 2018-12-30, ...], [2019-04-14, ...], ...]
+     *   3. [["2018-10-08 技術書典5", "2018-12-30 C95", ...], ["2019-04-14 技術書典6", ...], ...]
+     *   4. [[2018-10-08 技術書典5, 2018-12-30 C95, ...], [2019-04-14 技術書典6, ...], ...]
      *
      * @param history 発行年月
      * @return パース結果
@@ -270,14 +277,14 @@ class ReviewConfig {
             List<HistoryItem> editionItems = new ArrayList<>();
             for (Object printing : edition) {
                 if (printing instanceof Date) {
-                    // パターン1の場合
-                    editionItems.add(new HistoryItem(dateToLocalDate((Date) printing), ""));
-                } else if (printing instanceof String) {
                     // パターン2の場合
+                    editionItems.add(new HistoryItem(convertIntoLocalDate(printing), ""));
+                } else if (printing instanceof String) {
+                    // パターン1, 3, 4の場合
                     String[] elements = ((String) printing).split(" ", 2);
                     editionItems.add(new HistoryItem(
                         LocalDate.parse(elements[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                        elements[1]
+                        elements.length == 2 ? elements[1] : ""
                     ));
                 }
             }

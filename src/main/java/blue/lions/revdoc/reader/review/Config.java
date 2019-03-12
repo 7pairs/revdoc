@@ -105,7 +105,7 @@ class Config {
     Config(String yamlString) {
         // YAMLをパースする
         Yaml yaml = new Yaml();
-        Map config = yaml.loadAs(yamlString, Map.class);
+        Map<String, Object> config = yaml.load(yamlString);
 
         // フィールドを初期化する
         bookName = (String) config.get("bookname");
@@ -202,9 +202,9 @@ class Config {
      * @return パース結果
      */
     private List<String> parsePeople(Object data) {
-        // nullが指定された場合はそのまま返す
+        // nullが指定された場合は空リストを返す
         if (data == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         // パース結果格納用
@@ -221,7 +221,7 @@ class Config {
                     people.add((String) person);
                 } else if (person instanceof Map) {
                     // パターン5, 6の場合
-                    String name = (String) ((Map) person).get("name");
+                    String name = ((Map<String, String>) person).get("name");
                     if (name != null) {
                         people.add(name);
                     }
@@ -264,9 +264,9 @@ class Config {
      * @return パース結果
      */
     private List<List<HistoryItem>> parseHistory(List<List> history) {
-        // nullが指定された場合はそのまま返す
+        // nullが指定された場合は空リストを返す
         if (history == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         // パース結果格納用

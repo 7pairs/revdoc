@@ -1,7 +1,22 @@
+/*
+ * Copyright 2019 Jun-ya HASEBA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package blue.lions.revdoc.reader.review;
 
-import blue.lions.revdoc.ast.ChapterNode;
-import blue.lions.revdoc.ast.Heading1Node;
+import blue.lions.revdoc.ast.DocumentNode;
+import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.ParentNode;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.ParagraphNode;
@@ -10,12 +25,18 @@ import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 
+/*
+ * Re:VIEWパーサー。
+ */
 @BuildParseTree
 class ReviewParser extends BaseParser<Object> {
 
-    Rule Root() {
+    /*
+     * Document <- Block *
+     */
+    Rule Document() {
         return Sequence(
-            push(new ChapterNode()),
+            push(new DocumentNode()),
             ZeroOrMore(Block(), appendChild())
         );
     }
@@ -31,7 +52,7 @@ class ReviewParser extends BaseParser<Object> {
         return Sequence(
             "= ",
             Text(),
-            push(new Heading1Node((TextNode) pop())),
+            push(new HeadingNode((TextNode) pop())),
             Newline()
         );
     }

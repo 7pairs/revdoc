@@ -1,8 +1,8 @@
 package blue.lions.revdoc.ast;
 
-public class Heading1Node extends ParentNode {
+public class HeadingNode extends ParentNode {
 
-    public Heading1Node(TextNode textNode) {
+    public HeadingNode(TextNode textNode) {
         super(textNode);
     }
 

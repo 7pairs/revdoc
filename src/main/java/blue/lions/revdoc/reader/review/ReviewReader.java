@@ -16,7 +16,12 @@
 package blue.lions.revdoc.reader.review;
 
 import blue.lions.revdoc.Arguments;
+import blue.lions.revdoc.ast.AppendixNode;
+import blue.lions.revdoc.ast.BackMatterNode;
+import blue.lions.revdoc.ast.BodyMatterNode;
+import blue.lions.revdoc.ast.FrontMatterNode;
 import blue.lions.revdoc.ast.Node;
+import blue.lions.revdoc.ast.PartNode;
 import blue.lions.revdoc.ast.RootNode;
 import blue.lions.revdoc.reader.Reader;
 import org.parboiled.Parboiled;
@@ -27,6 +32,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Re:VIEWフォーマットのファイルを読み込むリーダー。
@@ -60,20 +67,82 @@ public class ReviewReader extends Reader {
         // ルートノードを構築する
         RootNode rootNode = new RootNode(config.getBookTitle());
 
+        // 前付ノードを構築する
+        FrontMatterNode frontMatterNode = new FrontMatterNode();
+        frontMatterNode.appendChildren(parseDocuments(catalog.getPredef()));
+        rootNode.appendChild(frontMatterNode);
 
-        String input = "= 見出し\n\n1行目\n2行目\n\n2段落目\n";
-        ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<Node> result = new ReportingParseRunner<Node>(reviewParser.Root()).run(input);
+        // 本文ノードを構築する
+        BodyMatterNode bodyMatterNode = new BodyMatterNode();
+        for (Catalog.Part part : catalog.getChapters()) {
+            PartNode partNode = new PartNode();
+            partNode.appendChild(parseDocument(part.getFileName()));
+            partNode.appendChildren(parseDocuments(part.getChapterFileNames()));
+        }
+        rootNode.appendChild(bodyMatterNode);
 
+        // 付録ノードを構築する
+        AppendixNode appendixNode = new AppendixNode();
+        appendixNode.appendChildren(parseDocuments(catalog.getAppendix()));
+        rootNode.appendChild(appendixNode);
+
+        // 後付ノードを構築する
+        BackMatterNode backMatterNode = new BackMatterNode();
+        backMatterNode.appendChildren(parseDocuments(catalog.getPostdef()));
+        rootNode.appendChild(backMatterNode);
+
+        // 構築したルートノードを返す
         return rootNode;
     }
 
+    /*
+     * テキストファイルを読み込み、内容を文字列として取得する。
+     *
+     * @param path ファイルパス
+     * @return ファイル内容
+     */
     private String readFile(Path path) {
+        // ファイルを読み込む
         try {
             return Files.readString(path);
         } catch (IOException e) {
             e.printStackTrace();
             return "";
         }
+    }
+
+    /*
+     * Re:VIEWフォーマットのファイルをパースし、結果をASTに変換する。
+     *
+     * @param fileName ファイル名
+     * @return パース結果
+     */
+    private Node parseDocument(String fileName) {
+        // Re:VIEWフォーマットのファイルをパースする
+        String review = readFile(Paths.get(inputDirectoryPath, fileName));
+        ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
+        ParsingResult<Node> result = new ReportingParseRunner<Node>(reviewParser.Document()).run(review);
+
+        // パース結果を返す
+        return result.resultValue;
+    }
+
+    /*
+     * 複数のRe:VIEWフォーマットのファイルをパースし、結果をASTのリストに変換する。
+     *
+     * @param fileNames ファイル名
+     * @return パース結果
+     */
+    private List<Node> parseDocuments(List<String> fileNames) {
+        // パース結果格納用
+        List<Node> documents = new ArrayList<>();
+
+        // Re:VIEWフォーマットのファイルをパースする
+        for (String fileName : fileNames) {
+            documents.add(parseDocument(fileName));
+        }
+
+        // パース結果を返す
+        return documents;
     }
 }

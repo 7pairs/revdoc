@@ -17,6 +17,8 @@ package blue.lions.revdoc.reader.review;
 
 import org.yaml.snakeyaml.Yaml;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,11 +27,55 @@ import java.util.Map;
  */
 class Catalog {
 
+    /*
+     * 部の情報を格納するクラス。
+     */
+    static class Part {
+
+        /* ファイル名 */
+        private String fileName;
+
+        /* 章のファイル名 */
+        private List<String> chapterFileNames;
+
+        /*
+         * {@code Part} オブジェクトを構築する。
+         *
+         * @param fileName ファイル名
+         * @param chapterFileNames 章のファイル名
+         */
+        Part(String fileName, List<String> chapterFileNames) {
+            // フィールドを初期化する
+            this.fileName = fileName;
+            this.chapterFileNames = chapterFileNames;
+        }
+
+        /*
+         * ファイル名を取得する。
+         *
+         * @return ファイル名
+         */
+        String getFileName() {
+            // ファイル名を返す
+            return fileName;
+        }
+
+        /*
+         * 章のファイル名を取得する。
+         *
+         * @return 章のファイル名
+         */
+        List<String> getChapterFileNames() {
+            // 章のファイル名を返す
+            return Collections.unmodifiableList(chapterFileNames);
+        }
+    }
+
     /* 前付 */
     private List<String> predef;
 
-    /* 章 */
-    private List<List<String>> chapters;
+    /* 本編 */
+    private List<Part> chapters;
 
     /* 付録 */
     private List<String> appendix;
@@ -45,12 +91,85 @@ class Catalog {
     Catalog(String yamlString) {
         // YAMLをパースする
         Yaml yaml = new Yaml();
-        Map catalog = yaml.loadAs(yamlString, Map.class);
+        Map<String, Object> catalog = yaml.load(yamlString);
 
         // フィールドを初期化する
-        predef = (List<String>) catalog.get("PREDEF");
-        chapters = (List<List<String>>) catalog.get("CHAPS");
-        appendix = (List<String>) catalog.get("APPENDIX");
-        postdef = (List<String>) catalog.get("POSTDEF");
+        predef = (List<String>) catalog.getOrDefault("PREDEF", Collections.emptyList());
+        chapters = parseChapters((List) catalog.get("CHAPS"));
+        appendix = (List<String>) catalog.getOrDefault("APPENDIX", Collections.emptyList());
+        postdef = (List<String>) catalog.getOrDefault("POSTDEF", Collections.emptyList());
+    }
+
+    /*
+     * 前付を取得する。
+     *
+     * @return 前付
+     */
+    List<String> getPredef() {
+        // 前付を返す
+        return Collections.unmodifiableList(predef);
+    }
+
+    /*
+     * 本編を取得する。
+     *
+     * @return 本編
+     */
+    List<Part> getChapters() {
+        // 本編を返す
+        return Collections.unmodifiableList(chapters);
+    }
+
+    /*
+     * 付録を取得する。
+     *
+     * @return 付録
+     */
+    List<String> getAppendix() {
+        // 付録を返す
+        return Collections.unmodifiableList(appendix);
+    }
+
+    /*
+     * 後付を取得する。
+     *
+     * @return 後付
+     */
+    List<String> getPostdef() {
+        // 後付を返す
+        return Collections.unmodifiableList(postdef);
+    }
+
+    /*
+     * 本編情報をパースし、結果を @{code List<Part>} に変換する。
+     *
+     * @param chaps 本編情報
+     * @return パース結果
+     */
+    private List<Part> parseChapters(List chaps) {
+        // nullが指定された場合は空リストを返す
+        if (chaps == null) {
+            return Collections.emptyList();
+        }
+
+        // パース結果格納用
+        List<Part> chapters = new ArrayList<>();
+
+        // 本編情報をパースする
+        Object firstChap = chaps.get(0);
+        if (firstChap instanceof Map) {
+            // 部がある場合
+            for (Map<String, List<String>> part : (List<Map<String, List<String>>>) chaps) {
+                for (Map.Entry<String, List<String>> entry : part.entrySet()) {
+                    chapters.add(new Part(entry.getKey(), entry.getValue()));
+                }
+            }
+        } else if (firstChap instanceof String) {
+            // 部がない場合
+            chapters.add(new Part("", chaps));
+        }
+
+        // パース結果を返す
+        return chapters;
     }
 }

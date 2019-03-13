@@ -4,6 +4,6 @@ public class BackMatterNode extends ParentNode {
 
     @Override
     public void accept(Visitor visitor) {
-
+        visitor.visit(this);
     }
 }

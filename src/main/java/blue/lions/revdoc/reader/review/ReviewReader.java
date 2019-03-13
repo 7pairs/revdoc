@@ -34,9 +34,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Re:VIEWフォーマットのファイルを読み込むリーダー。
+ * Re:VIEWフォーマットのファイルを扱うリーダー。
  */
 public class ReviewReader extends Reader {
 
@@ -104,7 +105,7 @@ public class ReviewReader extends Reader {
     private String readFile(Path path) {
         // ファイルを読み込む
         try {
-            return Files.readString(path);
+            return Files.lines(path).collect(Collectors.joining(System.getProperty("line.separator")));
         } catch (IOException e) {
             e.printStackTrace();
             return "";

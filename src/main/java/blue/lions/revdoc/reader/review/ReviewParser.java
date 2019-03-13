@@ -26,13 +26,13 @@ import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 
 /*
- * Re:VIEWパーサー。
+ * Re:VIEWフォーマットのパーサー。
  */
 @BuildParseTree
 class ReviewParser extends BaseParser<Object> {
 
     /*
-     * Document <- Block *
+     * Document <- Block*
      */
     Rule Document() {
         return Sequence(
@@ -41,57 +41,159 @@ class ReviewParser extends BaseParser<Object> {
         );
     }
 
+    /*
+     * Block <- (Heading5 / Heading4 / Heading3 / Heading2 / Heading1 / Paragraph)
+     */
     Rule Block() {
-        return Sequence(
-            ZeroOrMore(BlankLine()),
-            FirstOf(Heading1(), Paragraph())
+        return FirstOf(
+            Heading5(),
+            Heading4(),
+            Heading3(),
+            Heading2(),
+            Heading1(),
+            Paragraph()
         );
     }
 
+    /*
+     * Heading1 <- "=" ("[" Text "]")? Space* Text NewLine
+     */
     Rule Heading1() {
         return Sequence(
-            "= ",
+            "=",
+            Optional(FirstOf(Sequence("[", Text(), push(match()), "]"), push(""))),
+            ZeroOrMore(Space()),
             Text(),
-            push(new HeadingNode((TextNode) pop())),
-            Newline()
+            push(new HeadingNode(1, (Node) pop(), (String) pop())),
+            NewLine()
         );
     }
 
+    /*
+     * Heading2 <- "==" ("[" Text "]")? Space* Text NewLine
+     */
+    Rule Heading2() {
+        return Sequence(
+            "==",
+            Optional(FirstOf(Sequence("[", Text(), push(match()), "]"), push(""))),
+            ZeroOrMore(Space()),
+            Text(),
+            push(new HeadingNode(2, (Node) pop(), (String) pop())),
+            NewLine()
+        );
+    }
+
+    /*
+     * Heading3 <- "===" ("[" Text "]")? Space* Text NewLine
+     */
+    Rule Heading3() {
+        return Sequence(
+            "===",
+            Optional(FirstOf(Sequence("[", Text(), push(match()), "]"), push(""))),
+            ZeroOrMore(Space()),
+            Text(),
+            push(new HeadingNode(3, (Node) pop(), (String) pop())),
+            NewLine()
+        );
+    }
+
+    /*
+     * Heading4 <- "====" ("[" Text "]")? Space* Text NewLine
+     */
+    Rule Heading4() {
+        return Sequence(
+            "====",
+            Optional(FirstOf(Sequence("[", Text(), push(match()), "]"), push(""))),
+            ZeroOrMore(Space()),
+            Text(),
+            push(new HeadingNode(4, (Node) pop(), (String) pop())),
+            NewLine()
+        );
+    }
+
+    /*
+     * Heading5 <- "=====" ("[" Text "]")? Space* Text NewLine
+     */
+    Rule Heading5() {
+        return Sequence(
+            "=====",
+            Optional(FirstOf(Sequence("[", Text(), push(match()), "]"), push(""))),
+            ZeroOrMore(Space()),
+            Text(),
+            push(new HeadingNode(5, (Node) pop(), (String) pop())),
+            NewLine()
+        );
+    }
+
+    /*
+     * Paragraph <- Text &((BlankLine / EOI)+)
+     */
     Rule Paragraph() {
         return Sequence(
             Text(),
-            push(new ParagraphNode((TextNode) pop())),
-            Test(FirstOf(OneOrMore(BlankLine()), EOI))
+            push(new ParagraphNode((Node) pop())),
+            Test(OneOrMore(FirstOf(BlankLine(), EOI)))
         );
     }
 
-    Rule NormalCharacter() {
+    /*
+     * Text <- NormalCharacter+
+     */
+    Rule Text(String... s) {
         return Sequence(
-            TestNot(' '),
-            TestNot(AnyOf("\n\r")),
-            ANY
-        );
-    }
-
-    Rule Text() {
-        return Sequence(
-            OneOrMore(OneOrMore(NormalCharacter()), Newline()),
+            OneOrMore(NormalCharacter()),
             push(new TextNode(match()))
         );
     }
 
-    Rule Newline() {
-        return FirstOf('\n', Sequence('\r', Optional('\n')));
-    }
-
-    Rule BlankLine() {
+    /*
+     * NormalCharacter <- !NewLine ANY
+     */
+    Rule NormalCharacter() {
         return Sequence(
-            ZeroOrMore(' '),
-            Newline()
+            TestNot(NewLine()),
+            ANY
         );
     }
 
+    /*
+     * Space <- (" " / "\t")+
+     */
+    Rule Space() {
+        return OneOrMore(
+            FirstOf(" ", "\t")
+        );
+    }
+
+    /*
+     * NewLine <- "\n" / ("\r" "\n"?)
+     */
+    Rule NewLine() {
+        return FirstOf(
+            '\n',
+            Sequence('\r', Optional('\n'))
+        );
+    }
+
+    /*
+     * BlankLine <- Space* NewLine
+     */
+    Rule BlankLine() {
+        return Sequence(
+            ZeroOrMore(Space()),
+            NewLine()
+        );
+    }
+
+    /*
+     * 親ノードに子ノードを追加する。
+     *
+     * スタックのトップに子ノード、その次に親ノードが積まれている必要がある。
+     *
+     * @return {@code true}
+     */
     boolean appendChild() {
+        // 親ノードに子ノードを追加する
         Node child = (Node) pop();
         ParentNode parent = (ParentNode) peek();
         parent.appendChild(child);

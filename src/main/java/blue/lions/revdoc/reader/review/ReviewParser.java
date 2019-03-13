@@ -56,71 +56,71 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading1 <- "=" ("[" Text "]")? Space* Text NewLine
+     * Heading1 <- "=" ("[" LimitedText("]") "]")? Space* Text NewLine
      */
     Rule Heading1() {
         return Sequence(
             "=",
-            Optional(FirstOf(Sequence("[", Text(), push(match()), "]"), push(""))),
+            Optional(FirstOf(Sequence("[", LimitedText("]"), "]"), push(""))),
             ZeroOrMore(Space()),
             Text(),
-            push(new HeadingNode(1, (Node) pop(), (String) pop())),
+            push(new HeadingNode(1, new TextNode((String) pop()), (String) pop())),
             NewLine()
         );
     }
 
     /*
-     * Heading2 <- "==" ("[" Text "]")? Space* Text NewLine
+     * Heading2 <- "==" ("[" LimitedText("]") "]")? Space* Text NewLine
      */
     Rule Heading2() {
         return Sequence(
             "==",
-            Optional(FirstOf(Sequence("[", Text(), push(match()), "]"), push(""))),
+            Optional(FirstOf(Sequence("[", LimitedText("]"), "]"), push(""))),
             ZeroOrMore(Space()),
             Text(),
-            push(new HeadingNode(2, (Node) pop(), (String) pop())),
+            push(new HeadingNode(2, new TextNode((String) pop()), (String) pop())),
             NewLine()
         );
     }
 
     /*
-     * Heading3 <- "===" ("[" Text "]")? Space* Text NewLine
+     * Heading3 <- "===" ("[" LimitedText("]") "]")? Space* Text NewLine
      */
     Rule Heading3() {
         return Sequence(
             "===",
-            Optional(FirstOf(Sequence("[", Text(), push(match()), "]"), push(""))),
+            Optional(FirstOf(Sequence("[", LimitedText("]"), "]"), push(""))),
             ZeroOrMore(Space()),
             Text(),
-            push(new HeadingNode(3, (Node) pop(), (String) pop())),
+            push(new HeadingNode(3, new TextNode((String) pop()), (String) pop())),
             NewLine()
         );
     }
 
     /*
-     * Heading4 <- "====" ("[" Text "]")? Space* Text NewLine
+     * Heading4 <- "====" ("[" LimitedText("]") "]")? Space* Text NewLine
      */
     Rule Heading4() {
         return Sequence(
             "====",
-            Optional(FirstOf(Sequence("[", Text(), push(match()), "]"), push(""))),
+            Optional(FirstOf(Sequence("[", LimitedText("]"), "]"), push(""))),
             ZeroOrMore(Space()),
             Text(),
-            push(new HeadingNode(4, (Node) pop(), (String) pop())),
+            push(new HeadingNode(4, new TextNode((String) pop()), (String) pop())),
             NewLine()
         );
     }
 
     /*
-     * Heading5 <- "=====" ("[" Text "]")? Space* Text NewLine
+     * Heading5 <- "=====" ("[" LimitedText("]") "]")? Space* Text NewLine
      */
     Rule Heading5() {
         return Sequence(
             "=====",
-            Optional(FirstOf(Sequence("[", Text(), push(match()), "]"), push(""))),
+            Optional(FirstOf(Sequence("[", LimitedText("]"), "]"), push(""))),
             ZeroOrMore(Space()),
             Text(),
-            push(new HeadingNode(5, (Node) pop(), (String) pop())),
+            push(new HeadingNode(5, new TextNode((String) pop()), (String) pop())),
             NewLine()
         );
     }
@@ -131,7 +131,7 @@ class ReviewParser extends BaseParser<Object> {
     Rule Paragraph() {
         return Sequence(
             Text(),
-            push(new ParagraphNode((Node) pop())),
+            push(new ParagraphNode(new TextNode((String) pop()))),
             Test(OneOrMore(FirstOf(BlankLine(), EOI)))
         );
     }
@@ -139,10 +139,20 @@ class ReviewParser extends BaseParser<Object> {
     /*
      * Text <- NormalCharacter+
      */
-    Rule Text(String... s) {
+    Rule Text() {
         return Sequence(
             OneOrMore(NormalCharacter()),
-            push(new TextNode(match()))
+            push(match())
+        );
+    }
+
+    /*
+     * LimitedText <- (!exclusion NormalCharacter)*
+     */
+    Rule LimitedText(String exclusion) {
+        return Sequence(
+            OneOrMore(TestNot(exclusion), NormalCharacter()),
+            push(match())
         );
     }
 

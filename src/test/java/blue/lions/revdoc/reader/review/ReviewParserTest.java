@@ -25,7 +25,7 @@ public class ReviewParserTest {
 
     @Test
     public void test() {
-        String review = "=[test] 見出し1\n==見出し2\n本文\n本文\n\n本文";
+        String review = "=[test] 見出し1\n==見出し2\n本文1\n本文2\n\n本文3\n";
 
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<Node> result = new ReportingParseRunner<Node>(reviewParser.Document()).run(review);

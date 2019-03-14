@@ -33,6 +33,9 @@ class ReviewParser extends BaseParser<Object> {
 
     /*
      * Document <- Block*
+     *
+     * Block要素はRule内で結果Nodeをpushしている。
+     * その結果NodeをDocumentNodeの子に追加する。
      */
     Rule Document() {
         return Sequence(
@@ -43,6 +46,8 @@ class ReviewParser extends BaseParser<Object> {
 
     /*
      * Block <- (Heading5 / Heading4 / Heading3 / Heading2 / Heading1 / Paragraph)
+     *
+     * 各要素はRule内で結果Nodeをpushすること。
      */
     Rule Block() {
         return FirstOf(
@@ -56,88 +61,85 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading1 <- "=" ("[" LimitedText("]") "]")? Space* Text NewLine
+     * Heading5 <- "=====" ("[" LimitedText("]") "]")? Space* Text NewLine
+     *
+     * 共通RuleのHeadingに任せる。
      */
-    Rule Heading1() {
-        return Sequence(
-            "=",
-            Optional(FirstOf(Sequence("[", LimitedText("]"), "]"), push(""))),
-            ZeroOrMore(Space()),
-            Text(),
-            push(new HeadingNode(1, new TextNode((String) pop()), (String) pop())),
-            NewLine()
-        );
-    }
-
-    /*
-     * Heading2 <- "==" ("[" LimitedText("]") "]")? Space* Text NewLine
-     */
-    Rule Heading2() {
-        return Sequence(
-            "==",
-            Optional(FirstOf(Sequence("[", LimitedText("]"), "]"), push(""))),
-            ZeroOrMore(Space()),
-            Text(),
-            push(new HeadingNode(2, new TextNode((String) pop()), (String) pop())),
-            NewLine()
-        );
-    }
-
-    /*
-     * Heading3 <- "===" ("[" LimitedText("]") "]")? Space* Text NewLine
-     */
-    Rule Heading3() {
-        return Sequence(
-            "===",
-            Optional(FirstOf(Sequence("[", LimitedText("]"), "]"), push(""))),
-            ZeroOrMore(Space()),
-            Text(),
-            push(new HeadingNode(3, new TextNode((String) pop()), (String) pop())),
-            NewLine()
-        );
+    Rule Heading5() {
+        return Heading(5);
     }
 
     /*
      * Heading4 <- "====" ("[" LimitedText("]") "]")? Space* Text NewLine
+     *
+     * 共通RuleのHeadingに任せる。
      */
     Rule Heading4() {
-        return Sequence(
-            "====",
-            Optional(FirstOf(Sequence("[", LimitedText("]"), "]"), push(""))),
-            ZeroOrMore(Space()),
-            Text(),
-            push(new HeadingNode(4, new TextNode((String) pop()), (String) pop())),
-            NewLine()
-        );
+        return Heading(4);
     }
 
     /*
-     * Heading5 <- "=====" ("[" LimitedText("]") "]")? Space* Text NewLine
+     * Heading3 <- "===" ("[" LimitedText("]") "]")? Space* Text NewLine
+     *
+     * 共通RuleのHeadingに任せる。
      */
-    Rule Heading5() {
+    Rule Heading3() {
+        return Heading(3);
+    }
+
+    /*
+     * Heading2 <- "==" ("[" LimitedText("]") "]")? Space* Text NewLine
+     *
+     * 共通RuleのHeadingに任せる。
+     */
+    Rule Heading2() {
+        return Heading(2);
+    }
+
+    /*
+     * Heading1 <- "=" ("[" LimitedText("]") "]")? Space* Text NewLine
+     *
+     * 共通RuleのHeadingに任せる。
+     */
+    Rule Heading1() {
+        return Heading(1);
+    }
+
+    /*
+     * Heading1〜5の共通Rule。
+     *
+     * @param level 見出しレベル
+     * @return 構築した @{code Rule}
+     */
+    Rule Heading(int level) {
         return Sequence(
-            "=====",
+            "=====".substring(5 - level),
             Optional(FirstOf(Sequence("[", LimitedText("]"), "]"), push(""))),
             ZeroOrMore(Space()),
             Text(),
-            push(new HeadingNode(5, new TextNode((String) pop()), (String) pop())),
+            push(new HeadingNode(level, new TextNode(popAs()), popAs())),
             NewLine()
         );
     }
 
     /*
-     * Paragraph <- Text &((BlankLine / EOI)+)
+     * Paragraph <- (Text NewLine)+ (BlankLine / EOI)
+     *
+     * 複数行にわたる場合は、改行文字を除外して連結する。
      */
     Rule Paragraph() {
         return Sequence(
-            Text(),
-            push(new ParagraphNode(new TextNode((String) pop()))),
-            Test(OneOrMore(FirstOf(BlankLine(), EOI)))
+            push(""),
+            OneOrMore(Text(), appendString(), NewLine()),
+            push(new ParagraphNode(new TextNode(popAs()))),
+            FirstOf(BlankLine(), EOI)
         );
     }
 
     /*
      * Text <- NormalCharacter+
+     *
+     * マッチした文字列をpushする。
      */
     Rule Text() {
         return Sequence(
@@ -148,6 +150,8 @@ class ReviewParser extends BaseParser<Object> {
 
     /*
      * LimitedText <- (!exclusion NormalCharacter)*
+     *
+     * マッチした文字列をpushする。
      */
     Rule LimitedText(String exclusion) {
         return Sequence(
@@ -196,17 +200,51 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * 親ノードに子ノードを追加する。
+     * 子ノードを追加する。
      *
-     * スタックのトップに子ノード、その次に親ノードが積まれている必要がある。
+     * スタックのトップに子ノード、その次に親となるノードが積まれている必要がある。
      *
      * @return {@code true}
      */
     boolean appendChild() {
-        // 親ノードに子ノードを追加する
-        Node child = (Node) pop();
-        ParentNode parent = (ParentNode) peek();
+        // 子ノードを追加する
+        Node child = popAs();
+        ParentNode parent = peekAs();
         parent.appendChild(child);
         return true;
+    }
+
+    /*
+     * 文字列を結合する。
+     *
+     * スタックのトップに後ろの文字列、その次に前の文字列が積まれている必要がある。
+     *
+     * @return {@code true}
+     */
+    boolean appendString() {
+        // 文字列を結合する
+        String suffix = popAs();
+        push(popAs() + suffix);
+        return true;
+    }
+
+    /*
+     * {@code pop()} の結果を代入先に応じた型で取得する。
+     *
+     * @return {@code pop()} の結果
+     */
+    <T> T popAs() {
+        // 代入先に応じた型で返す
+        return (T) pop();
+    }
+
+    /*
+     * {@code peek()} の結果を代入先に応じた型で取得する。
+     *
+     * @return {@code peek()} の結果
+     */
+    <T> T peekAs() {
+        // 代入先に応じた型で返す
+        return (T) peek();
     }
 }

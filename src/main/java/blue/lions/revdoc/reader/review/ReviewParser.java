@@ -32,7 +32,7 @@ import org.parboiled.annotations.BuildParseTree;
 class ReviewParser extends BaseParser<Object> {
 
     /*
-     * Document <- Block*
+     * Document <- (BlankLine* Block)*
      *
      * Block要素はRule内で結果Nodeをpushしている。
      * その結果NodeをDocumentNodeの子に追加する。
@@ -40,7 +40,7 @@ class ReviewParser extends BaseParser<Object> {
     Rule Document() {
         return Sequence(
             push(new DocumentNode()),
-            ZeroOrMore(Block(), appendChild())
+            ZeroOrMore(ZeroOrMore(BlankLine()), Block(), appendChild())
         );
     }
 
@@ -61,7 +61,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading5 <- "=====" ("[" LimitedText("]") "]")? Space* Text NewLine
+     * Heading5 <- "=====" ("[" LimitedText("]") "]")? Space* Text (NewLine / EOI)
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -70,7 +70,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading4 <- "====" ("[" LimitedText("]") "]")? Space* Text NewLine
+     * Heading4 <- "====" ("[" LimitedText("]") "]")? Space* Text (NewLine / EOI)
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -79,7 +79,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading3 <- "===" ("[" LimitedText("]") "]")? Space* Text NewLine
+     * Heading3 <- "===" ("[" LimitedText("]") "]")? Space* Text (NewLine / EOI)
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -88,7 +88,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading2 <- "==" ("[" LimitedText("]") "]")? Space* Text NewLine
+     * Heading2 <- "==" ("[" LimitedText("]") "]")? Space* Text (NewLine / EOI)
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -97,7 +97,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading1 <- "=" ("[" LimitedText("]") "]")? Space* Text NewLine
+     * Heading1 <- "=" ("[" LimitedText("]") "]")? Space* Text (NewLine / EOI)
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -118,21 +118,20 @@ class ReviewParser extends BaseParser<Object> {
             ZeroOrMore(Space()),
             Text(),
             push(new HeadingNode(level, new TextNode(popAs()), popAs())),
-            NewLine()
+            FirstOf(NewLine(), EOI)
         );
     }
 
     /*
-     * Paragraph <- (Text NewLine)+ (BlankLine / EOI)
+     * Paragraph <- (Text (NewLine / EOI))+
      *
      * 複数行にわたる場合は、改行文字を除外して連結する。
      */
     Rule Paragraph() {
         return Sequence(
             push(""),
-            OneOrMore(Text(), appendString(), NewLine()),
-            push(new ParagraphNode(new TextNode(popAs()))),
-            FirstOf(BlankLine(), EOI)
+            OneOrMore(Text(), appendString(), FirstOf(NewLine(), EOI)),
+            push(new ParagraphNode(new TextNode(popAs())))
         );
     }
 

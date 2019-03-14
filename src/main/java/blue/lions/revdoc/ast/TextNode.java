@@ -8,6 +8,10 @@ public class TextNode extends Node {
         this.text = text;
     }
 
+    public String getText() {
+        return text;
+    }
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);

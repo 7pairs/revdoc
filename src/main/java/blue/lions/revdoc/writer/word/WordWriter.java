@@ -18,6 +18,13 @@ package blue.lions.revdoc.writer.word;
 import blue.lions.revdoc.Arguments;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.writer.Writer;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Wordファイルを扱うライター。
@@ -46,7 +53,16 @@ public class WordWriter extends Writer {
      */
     @Override
     public void run(Node ast) {
-        WordVisitor wordVisitor = new WordVisitor(templateFilePath, outputFilePath);
-        wordVisitor.accept(ast);
+        try (
+            // InputStream inputStream = Files.newInputStream(Paths.get(templateFilePath));
+            XWPFDocument document = new XWPFDocument(/* inputStream */);
+            OutputStream outputStream = Files.newOutputStream(Paths.get(outputFilePath))
+        ) {
+            WordVisitor wordVisitor = new WordVisitor(document);
+            wordVisitor.accept(ast);
+            document.write(outputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

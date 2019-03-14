@@ -13,16 +13,16 @@ import blue.lions.revdoc.ast.PartNode;
 import blue.lions.revdoc.ast.RootNode;
 import blue.lions.revdoc.ast.TextNode;
 import blue.lions.revdoc.ast.Visitor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 public class WordVisitor implements Visitor {
 
-    private String templateFilePath;
+    XWPFDocument document;
 
-    private String outputFilePath;
-
-    public WordVisitor(String templateFilePath, String outputFilePath) {
-        this.templateFilePath = templateFilePath;
-        this.outputFilePath = outputFilePath;
+    public WordVisitor(XWPFDocument document) {
+        this.document = document;
     }
 
     public void accept(Node node) {
@@ -76,7 +76,9 @@ public class WordVisitor implements Visitor {
 
     @Override
     public void visit(ParagraphNode node) {
-
+        XWPFParagraph paragraph = document.createParagraph();
+        XWPFRun run = paragraph.createRun();
+        run.setText(((TextNode)node.getChildren().get(0)).getText());
     }
 
     @Override

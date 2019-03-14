@@ -79,6 +79,7 @@ public class ReviewReader extends Reader {
             PartNode partNode = new PartNode();
             partNode.appendChild(parseDocument(part.getFileName()));
             partNode.appendChildren(parseDocuments(part.getChapterFileNames()));
+            bodyMatterNode.appendChild(partNode);
         }
         rootNode.appendChild(bodyMatterNode);
 

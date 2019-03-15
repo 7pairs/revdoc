@@ -123,7 +123,7 @@ public class ReviewReader extends Reader {
         // Re:VIEWフォーマットのファイルをパースする
         String review = readFile(Paths.get(inputDirectoryPath, fileName));
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<Node> result = new ReportingParseRunner<Node>(reviewParser.Document()).run(review);
+        ParsingResult<Node> result = new ReportingParseRunner<Node>(reviewParser.Chapter()).run(review);
 
         // パース結果を返す
         return result.resultValue;

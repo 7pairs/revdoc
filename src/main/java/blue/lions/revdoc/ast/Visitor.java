@@ -14,7 +14,7 @@ public interface Visitor {
 
     void visit(PartNode node);
 
-    void visit(DocumentNode node);
+    void visit(ChapterNode node);
 
     void visit(HeadingNode node);
 

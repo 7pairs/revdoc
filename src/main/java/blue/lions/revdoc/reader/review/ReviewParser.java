@@ -15,7 +15,7 @@
  */
 package blue.lions.revdoc.reader.review;
 
-import blue.lions.revdoc.ast.DocumentNode;
+import blue.lions.revdoc.ast.ChapterNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.ParentNode;
 import blue.lions.revdoc.ast.Node;
@@ -32,14 +32,14 @@ import org.parboiled.annotations.BuildParseTree;
 class ReviewParser extends BaseParser<Object> {
 
     /*
-     * Document <- (BlankLine* Block)*
+     * Chapter <- (BlankLine* Block)*
      *
      * Block要素はRule内で結果Nodeをpushしている。
-     * その結果NodeをDocumentNodeの子に追加する。
+     * その結果NodeをChapterNodeの子に追加する。
      */
-    Rule Document() {
+    Rule Chapter() {
         return Sequence(
-            push(new DocumentNode()),
+            push(new ChapterNode()),
             ZeroOrMore(ZeroOrMore(BlankLine()), Block(), appendChild())
         );
     }

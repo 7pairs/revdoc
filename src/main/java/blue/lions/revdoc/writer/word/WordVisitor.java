@@ -3,7 +3,7 @@ package blue.lions.revdoc.writer.word;
 import blue.lions.revdoc.ast.AppendixNode;
 import blue.lions.revdoc.ast.BackMatterNode;
 import blue.lions.revdoc.ast.BodyMatterNode;
-import blue.lions.revdoc.ast.DocumentNode;
+import blue.lions.revdoc.ast.ChapterNode;
 import blue.lions.revdoc.ast.FrontMatterNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.Node;
@@ -65,7 +65,7 @@ public class WordVisitor implements Visitor {
     }
 
     @Override
-    public void visit(DocumentNode node) {
+    public void visit(ChapterNode node) {
 
     }
 

@@ -16,5 +16,10 @@ hs_err_pid*
 # Gradle Files
 .gradle/
 
-# IntelliJ Files
+# IntelliJ IDEA Files
 .idea/
+*.iml
+
+# Output Files
+build/
+out/

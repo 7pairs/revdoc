@@ -13,19 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.writer.word;
 
-/**
- * すべてのノードのベースクラス。
- */
-public abstract class Node {
+public class WordWriterTest {
 
-    /**
-     * Visitorを受け入れる。
-     *
-     * サブクラスではVisitorの {@code visit()} を呼び出すこと。
-     *
-     * @param visitor Visitor
-     */
-    public abstract void accept(Visitor visitor);
+    // ToDo: PowerMockがJUnit5に対応したらテストを追加する
 }

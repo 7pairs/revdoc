@@ -15,32 +15,23 @@
  */
 package blue.lions.revdoc.writer;
 
+import static org.assertj.core.api.Assertions.*;
+
 import blue.lions.revdoc.Arguments;
-import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.writer.word.WordWriter;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-/**
- * すべてのWriterのベースクラス。
- */
-public abstract class Writer {
+public class WriterTest {
 
-    /**
-     * コマンドライン引数に対応したWriterを取得する。
-     *
-     * 現時点では {@code WordWriter} を固定で返している。
-     *
-     * @param arguments コマンドライン引数
-     * @return Writer
-     */
-    public static Writer getInstance(Arguments arguments) {
-        // WordWriterを返す
-        return new WordWriter(arguments);
+    @Test
+    @DisplayName("getInstance : 条件なし : WordWriterを返すこと")
+    public void getInstance_None_ReturnWordWriter() {
+        final Class EXPECTED = WordWriter.class;
+
+        Arguments arguments = Arguments.parse();
+        Writer writer = Writer.getInstance(arguments);
+
+        assertThat(writer).isInstanceOf(EXPECTED);
     }
-
-    /**
-     * 抽象構文木を解析し、印刷用ファイルを出力する。
-     *
-     * @param ast 抽象構文木
-     */
-    public abstract void run(Node ast);
 }

@@ -27,7 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * Wordファイルを扱うライター。
+ * Wordファイルを扱うWriter。
  */
 public class WordWriter extends Writer {
 
@@ -53,9 +53,10 @@ public class WordWriter extends Writer {
      */
     @Override
     public void run(Node ast) {
+        // Wordファイルを出力する
         try (
-            // InputStream inputStream = Files.newInputStream(Paths.get(templateFilePath));
-            XWPFDocument document = new XWPFDocument(/* inputStream */);
+            InputStream inputStream = Files.newInputStream(Paths.get(templateFilePath));
+            XWPFDocument document = new XWPFDocument(inputStream);
             OutputStream outputStream = Files.newOutputStream(Paths.get(outputFilePath))
         ) {
             WordVisitor wordVisitor = new WordVisitor(document);

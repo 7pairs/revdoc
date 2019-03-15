@@ -39,12 +39,13 @@ public class ReviewParserTest {
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
-        assertThat(result.resultValue.getClass()).isEqualTo(EXPECTED);
+        assertThat(result.resultValue).isInstanceOf(EXPECTED);
     }
 
     @Test
     @DisplayName("ReviewParser : Heading1 をパースしたとき : HeadingNode に変換されること")
     public void ReviewParser_parseHeading1_convertHeadingNode() {
+        final Class EXPECTED_CLASS = HeadingNode.class;
         final int EXPECTED_LEVEL = 1;
         final String EXPECTED_TEXT1 = "見出し1";
         final String EXPECTED_TEXT2 = "見出し2";
@@ -54,12 +55,12 @@ public class ReviewParserTest {
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
-        assertThat(result.resultValue.getChildren().get(0).getClass()).isEqualTo(HeadingNode.class);
+        assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getLevel()).isEqualTo(EXPECTED_LEVEL);
         assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText())
             .isEqualTo(EXPECTED_TEXT1);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getId()).isBlank();
-        assertThat(result.resultValue.getChildren().get(1).getClass()).isEqualTo(HeadingNode.class);
+        assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getLevel()).isEqualTo(EXPECTED_LEVEL);
         assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText())
             .isEqualTo(EXPECTED_TEXT2);
@@ -69,6 +70,7 @@ public class ReviewParserTest {
     @Test
     @DisplayName("ReviewParser : Heading2 をパースしたとき : HeadingNode に変換されること")
     public void ReviewParser_parseHeading2_convertHeadingNode() {
+        final Class EXPECTED_CLASS = HeadingNode.class;
         final int EXPECTED_LEVEL = 2;
         final String EXPECTED_TEXT1 = "見出し1";
         final String EXPECTED_TEXT2 = "見出し2";
@@ -78,12 +80,12 @@ public class ReviewParserTest {
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
-        assertThat(result.resultValue.getChildren().get(0).getClass()).isEqualTo(HeadingNode.class);
+        assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getLevel()).isEqualTo(EXPECTED_LEVEL);
         assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText())
             .isEqualTo(EXPECTED_TEXT1);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getId()).isBlank();
-        assertThat(result.resultValue.getChildren().get(1).getClass()).isEqualTo(HeadingNode.class);
+        assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getLevel()).isEqualTo(EXPECTED_LEVEL);
         assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText())
             .isEqualTo(EXPECTED_TEXT2);
@@ -93,6 +95,7 @@ public class ReviewParserTest {
     @Test
     @DisplayName("ReviewParser : Heading3 をパースしたとき : HeadingNode に変換されること")
     public void ReviewParser_parseHeading3_convertHeadingNode() {
+        final Class EXPECTED_CLASS = HeadingNode.class;
         final int EXPECTED_LEVEL = 3;
         final String EXPECTED_TEXT1 = "見出し1";
         final String EXPECTED_TEXT2 = "見出し2";
@@ -102,12 +105,12 @@ public class ReviewParserTest {
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
-        assertThat(result.resultValue.getChildren().get(0).getClass()).isEqualTo(HeadingNode.class);
+        assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getLevel()).isEqualTo(EXPECTED_LEVEL);
         assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText())
             .isEqualTo(EXPECTED_TEXT1);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getId()).isBlank();
-        assertThat(result.resultValue.getChildren().get(1).getClass()).isEqualTo(HeadingNode.class);
+        assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getLevel()).isEqualTo(EXPECTED_LEVEL);
         assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText())
             .isEqualTo(EXPECTED_TEXT2);
@@ -117,6 +120,7 @@ public class ReviewParserTest {
     @Test
     @DisplayName("ReviewParser : Heading4 をパースしたとき : HeadingNode に変換されること")
     public void ReviewParser_parseHeading4_convertHeadingNode() {
+        final Class EXPECTED_CLASS = HeadingNode.class;
         final int EXPECTED_LEVEL = 4;
         final String EXPECTED_TEXT1 = "見出し1";
         final String EXPECTED_TEXT2 = "見出し2";
@@ -126,12 +130,12 @@ public class ReviewParserTest {
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
-        assertThat(result.resultValue.getChildren().get(0).getClass()).isEqualTo(HeadingNode.class);
+        assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getLevel()).isEqualTo(EXPECTED_LEVEL);
         assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText())
             .isEqualTo(EXPECTED_TEXT1);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getId()).isBlank();
-        assertThat(result.resultValue.getChildren().get(1).getClass()).isEqualTo(HeadingNode.class);
+        assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getLevel()).isEqualTo(EXPECTED_LEVEL);
         assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText())
             .isEqualTo(EXPECTED_TEXT2);
@@ -141,6 +145,7 @@ public class ReviewParserTest {
     @Test
     @DisplayName("ReviewParser : Heading5 をパースしたとき : HeadingNode に変換されること")
     public void ReviewParser_parseHeading5_convertHeadingNode() {
+        final Class EXPECTED_CLASS = HeadingNode.class;
         final int EXPECTED_LEVEL = 5;
         final String EXPECTED_TEXT1 = "見出し1";
         final String EXPECTED_TEXT2 = "見出し2";
@@ -150,12 +155,12 @@ public class ReviewParserTest {
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
-        assertThat(result.resultValue.getChildren().get(0).getClass()).isEqualTo(HeadingNode.class);
+        assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getLevel()).isEqualTo(EXPECTED_LEVEL);
         assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText())
             .isEqualTo(EXPECTED_TEXT1);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getId()).isBlank();
-        assertThat(result.resultValue.getChildren().get(1).getClass()).isEqualTo(HeadingNode.class);
+        assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
         assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getLevel()).isEqualTo(EXPECTED_LEVEL);
         assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText())
             .isEqualTo(EXPECTED_TEXT2);
@@ -165,21 +170,22 @@ public class ReviewParserTest {
     @Test
     @DisplayName("ReviewParser : Paragraph をパースしたとき : ParagraphNode に変換されること")
     public void ReviewParser_parseParagraph_convertParagraphNode() {
-        final String EXPECTED1 = "吾輩は猫である。";
-        final String EXPECTED2 = "名前はまだ無い。";
-        final String EXPECTED3 = "どこで生れたかとんと見当がつかぬ。";
+        final Class EXPECTED_CLASS = ParagraphNode.class;
+        final String EXPECTED_TEXT1 = "吾輩は猫である。";
+        final String EXPECTED_TEXT2 = "名前はまだ無い。";
+        final String EXPECTED_TEXT3 = "どこで生れたかとんと見当がつかぬ。";
 
-        String review = String.format("%s\n%s\n\n%s\n", EXPECTED1, EXPECTED2, EXPECTED3);
+        String review = String.format("%s\n%s\n\n%s\n", EXPECTED_TEXT1, EXPECTED_TEXT2, EXPECTED_TEXT3);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
-        assertThat(result.resultValue.getChildren().get(0).getClass()).isEqualTo(ParagraphNode.class);
+        assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
         assertThat(
             ((TextNode) ((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText()
-        ).isEqualTo(EXPECTED1 + EXPECTED2);
-        assertThat(result.resultValue.getChildren().get(1).getClass()).isEqualTo(ParagraphNode.class);
+        ).isEqualTo(EXPECTED_TEXT1 + EXPECTED_TEXT2);
+        assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
         assertThat(
             ((TextNode) ((ParagraphNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText()
-        ).isEqualTo(EXPECTED3);
+        ).isEqualTo(EXPECTED_TEXT3);
     }
 }

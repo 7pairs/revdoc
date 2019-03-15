@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Re:VIEWフォーマットのファイルを扱うリーダー。
+ * Re:VIEWフォーマットのファイルを扱うReader。
  */
 public class ReviewReader extends Reader {
 
@@ -114,7 +114,7 @@ public class ReviewReader extends Reader {
     }
 
     /*
-     * Re:VIEWフォーマットのファイルをパースし、結果をASTに変換する。
+     * Re:VIEWフォーマットのファイルをパースし、結果を抽象構文木に変換する。
      *
      * @param fileName ファイル名
      * @return パース結果
@@ -130,7 +130,7 @@ public class ReviewReader extends Reader {
     }
 
     /*
-     * 複数のRe:VIEWフォーマットのファイルをパースし、結果をASTのリストに変換する。
+     * 複数のRe:VIEWフォーマットのファイルをパースし、結果を抽象構文木のリストに変換する。
      *
      * @param fileNames ファイル名
      * @return パース結果

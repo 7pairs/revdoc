@@ -20,17 +20,17 @@ import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.reader.review.ReviewReader;
 
 /**
- * すべてのリーダーのベースクラス。
+ * すべてのReaderのベースクラス。
  */
 public abstract class Reader {
 
     /**
-     * コマンドライン引数に対応したリーダーを取得する。
+     * コマンドライン引数に対応したReaderを取得する。
      *
      * 現時点では {@code ReviewReader} を固定で返している。
      *
      * @param arguments コマンドライン引数
-     * @return リーダー
+     * @return Reader
      */
     public static Reader getInstance(Arguments arguments) {
         // ReviewReaderを返す

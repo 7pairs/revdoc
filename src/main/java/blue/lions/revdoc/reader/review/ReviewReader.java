@@ -77,7 +77,7 @@ public class ReviewReader extends Reader {
         BodyMatterNode bodyMatterNode = new BodyMatterNode();
         for (Catalog.Part part : catalog.getChapters()) {
             PartNode partNode = new PartNode();
-            partNode.appendChild(parseDocument(part.getFileName()));
+            partNode.appendChild(parseChapter(part.getFileName()));
             partNode.appendChildren(parseDocuments(part.getChapterFileNames()));
             bodyMatterNode.appendChild(partNode);
         }
@@ -119,7 +119,7 @@ public class ReviewReader extends Reader {
      * @param fileName ファイル名
      * @return パース結果
      */
-    private Node parseDocument(String fileName) {
+    private Node parseChapter(String fileName) {
         // Re:VIEWフォーマットのファイルをパースする
         String review = readFile(Paths.get(inputDirectoryPath, fileName));
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
@@ -141,7 +141,7 @@ public class ReviewReader extends Reader {
 
         // Re:VIEWフォーマットのファイルをパースする
         for (String fileName : fileNames) {
-            documents.add(parseDocument(fileName));
+            documents.add(parseChapter(fileName));
         }
 
         // パース結果を返す

@@ -12,6 +12,14 @@ public class HeadingNode extends ParentNode {
         this.id = id;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
+    public String getId() {
+        return id;
+    }
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);

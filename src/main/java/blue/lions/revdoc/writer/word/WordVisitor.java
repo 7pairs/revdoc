@@ -116,6 +116,7 @@ public class WordVisitor implements Visitor {
         XWPFParagraph paragraph = document.createParagraph();
         XWPFRun run = paragraph.createRun();
         run.setText(((TextNode) node.getChildren().get(0)).getText());
+        run.setBold(true);
         // ToDo: 見出しのスタイルを適用する
     }
 

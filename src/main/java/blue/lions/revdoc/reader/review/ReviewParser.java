@@ -32,7 +32,7 @@ import org.parboiled.annotations.BuildParseTree;
 class ReviewParser extends BaseParser<Object> {
 
     /*
-     * Chapter <- (BlankLine* Block)*
+     * Chapter <- (BlankLine* (Block / Comment))*
      *
      * Block要素はRule内で結果Nodeをpushしている。
      * その結果NodeをChapterNodeの子に追加する。
@@ -40,7 +40,7 @@ class ReviewParser extends BaseParser<Object> {
     Rule Chapter() {
         return Sequence(
             push(new ChapterNode()),
-            ZeroOrMore(ZeroOrMore(BlankLine()), Block(), appendChild())
+            ZeroOrMore(ZeroOrMore(FirstOf(BlankLine(), Comment())), Block(), appendChild())
         );
     }
 
@@ -136,12 +136,27 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Text <- NormalCharacter+
+     * Comment <- "#@#" Text? NewLine
+     *
+     * Textがpushした文字列は破棄する。
+     */
+    Rule Comment() {
+        return Sequence(
+            "#@#",
+            Optional(Text()),
+            drop(),
+            NewLine()
+        );
+    }
+
+    /*
+     * Text <- !"#@#" NormalCharacter+
      *
      * マッチした文字列をpushする。
      */
     Rule Text() {
         return Sequence(
+            TestNot("#@#"),
             OneOrMore(NormalCharacter()),
             push(match())
         );

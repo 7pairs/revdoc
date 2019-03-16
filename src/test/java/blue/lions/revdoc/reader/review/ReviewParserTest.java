@@ -188,4 +188,21 @@ public class ReviewParserTest {
             ((TextNode) ((ParagraphNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText()
         ).isEqualTo(EXPECTED_TEXT3);
     }
+
+    @Test
+    @DisplayName("ReviewParser : Comment をパースしたとき : 無視されること")
+    public void ReviewParser_parseComment_beIgnored() {
+        final Class EXPECTED_CLASS = ParagraphNode.class;
+        final String EXPECTED_TEXT = "スシを食べすぎるな";
+
+        String review = String.format("#@# コメント\n%s\n#@#\n", EXPECTED_TEXT);
+        ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
+        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+
+        assertThat(result.resultValue.getChildren().size()).isEqualTo(1);
+        assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
+        assertThat(
+            ((TextNode) ((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText()
+        ).isEqualTo(EXPECTED_TEXT);
+    }
 }

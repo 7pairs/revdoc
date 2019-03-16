@@ -136,14 +136,14 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Comment <- "#@#" Text NewLine
+     * Comment <- "#@#" Text? NewLine
      *
      * Textがpushした文字列は破棄する。
      */
     Rule Comment() {
         return Sequence(
             "#@#",
-            Text(),
+            Optional(Text()),
             drop(),
             NewLine()
         );

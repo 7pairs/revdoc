@@ -17,6 +17,7 @@ package blue.lions.revdoc.reader.review;
 
 import blue.lions.revdoc.ast.ChapterNode;
 import blue.lions.revdoc.ast.FootnoteIDNode;
+import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.ParentNode;
 import blue.lions.revdoc.ast.Node;
@@ -46,7 +47,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Block <- (Heading5 / Heading4 / Heading3 / Heading2 / Heading1 / Paragraph)
+     * Block <- (Heading5 / Heading4 / Heading3 / Heading2 / Heading1 / Footnote / Paragraph)
      *
      * 各要素はRule内で結果Nodeをpushすること。
      */
@@ -57,6 +58,7 @@ class ReviewParser extends BaseParser<Object> {
             Heading3(),
             Heading2(),
             Heading1(),
+            Footnote(),
             Paragraph()
         );
     }
@@ -124,9 +126,23 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
+     * Footnote <- '//footnote[' LimitedText(']') '][' LimitedText(']') ']' NewLine
+     */
+    Rule Footnote() {
+        return Sequence(
+            "//footnote[",
+            LimitedText("]"),
+            "][",
+            LimitedText("]"),
+            swap(),
+            push(new FootnoteNode(popAs(), new TextNode(popAs()))),
+            "]",
+            NewLine()
+        );
+    }
+
+    /*
      * Paragraph <- ((Inline / Text) NewLine?)+
-     *
-     * 複数行にわたる場合は、改行文字を除外して連結する。
      */
     Rule Paragraph() {
         return Sequence(

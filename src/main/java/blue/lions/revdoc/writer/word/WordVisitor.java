@@ -20,6 +20,7 @@ import blue.lions.revdoc.ast.BackMatterNode;
 import blue.lions.revdoc.ast.BodyMatterNode;
 import blue.lions.revdoc.ast.ChapterNode;
 import blue.lions.revdoc.ast.FootnoteIDNode;
+import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.FrontMatterNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.Node;
@@ -119,6 +120,12 @@ public class WordVisitor implements Visitor {
         run.setText(((TextNode) node.getChildren().get(0)).getText());
         run.setBold(true);
         // ToDo: 見出しのスタイルを適用する
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(FootnoteNode node) {
+
     }
 
     /** {@inheritDoc} */

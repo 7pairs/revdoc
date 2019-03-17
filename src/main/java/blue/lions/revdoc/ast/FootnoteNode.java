@@ -16,21 +16,23 @@
 package blue.lions.revdoc.ast;
 
 /**
- * 脚注IDを表現するノード。
+ * 脚注を表現するノード。
  */
-public class FootnoteIDNode extends Node {
+public class FootnoteNode extends ParentNode {
 
     /* ID */
     private String id;
 
     /**
-     * {@code FootnoteIDNode} を構築する。
+     * {@code FootnoteNode} を構築する。
      *
-     * @param id ID
+     * @param id 脚注ID
+     * @param textNode 脚注内容
      */
-    public FootnoteIDNode(String id) {
+    public FootnoteNode(String id, TextNode textNode) {
         // フィールドを初期化する
         this.id = id;
+        appendChild(textNode);
     }
 
     /**
@@ -46,7 +48,7 @@ public class FootnoteIDNode extends Node {
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // FootnoteIDNodeに対する処理を実行する
+        // FootnoteNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

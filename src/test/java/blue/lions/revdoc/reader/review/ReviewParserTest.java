@@ -182,7 +182,10 @@ public class ReviewParserTest {
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
         assertThat(
             ((TextNode) ((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText()
-        ).isEqualTo(EXPECTED_TEXT1 + EXPECTED_TEXT2);
+        ).isEqualTo(EXPECTED_TEXT1);
+        assertThat(
+            ((TextNode) ((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(1)).getText()
+        ).isEqualTo(EXPECTED_TEXT2);
         assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
         assertThat(
             ((TextNode) ((ParagraphNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText()

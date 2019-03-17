@@ -19,6 +19,7 @@ import blue.lions.revdoc.ast.AppendixNode;
 import blue.lions.revdoc.ast.BackMatterNode;
 import blue.lions.revdoc.ast.BodyMatterNode;
 import blue.lions.revdoc.ast.ChapterNode;
+import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FrontMatterNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.Node;
@@ -127,6 +128,12 @@ public class WordVisitor implements Visitor {
         XWPFParagraph paragraph = document.createParagraph();
         XWPFRun run = paragraph.createRun();
         run.setText(((TextNode) node.getChildren().get(0)).getText());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(FootnoteIDNode node) {
+
     }
 
     /** {@inheritDoc} */

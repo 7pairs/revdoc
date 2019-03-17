@@ -16,6 +16,7 @@
 package blue.lions.revdoc.reader.review;
 
 import blue.lions.revdoc.ast.ChapterNode;
+import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.ParentNode;
 import blue.lions.revdoc.ast.Node;
@@ -61,7 +62,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading5 <- "=====" ("[" LimitedText("]") "]")? Space* Text (NewLine / EOI)
+     * Heading5 <- '=====' ('[' LimitedText(']') ']')? Space* Text NewLine
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -70,7 +71,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading4 <- "====" ("[" LimitedText("]") "]")? Space* Text (NewLine / EOI)
+     * Heading4 <- '====' ('[' LimitedText(']') ']')? Space* Text NewLine
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -79,7 +80,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading3 <- "===" ("[" LimitedText("]") "]")? Space* Text (NewLine / EOI)
+     * Heading3 <- '===' ('[' LimitedText(']') ']')? Space* Text NewLine
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -88,7 +89,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading2 <- "==" ("[" LimitedText("]") "]")? Space* Text (NewLine / EOI)
+     * Heading2 <- '==' ('[' LimitedText(']') ']')? Space* Text NewLine
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -97,7 +98,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading1 <- "=" ("[" LimitedText("]") "]")? Space* Text (NewLine / EOI)
+     * Heading1 <- '=' ('[' LimitedText(']') ']')? Space* Text NewLine
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -118,25 +119,46 @@ class ReviewParser extends BaseParser<Object> {
             ZeroOrMore(Space()),
             Text(),
             push(new HeadingNode(level, new TextNode(popAs()), popAs())),
-            FirstOf(NewLine(), EOI)
+            NewLine()
         );
     }
 
     /*
-     * Paragraph <- (Text (NewLine / EOI))+
+     * Paragraph <- ((Inline / Text) NewLine?)+
      *
      * 複数行にわたる場合は、改行文字を除外して連結する。
      */
     Rule Paragraph() {
         return Sequence(
-            push(""),
-            OneOrMore(Text(), appendString(), FirstOf(NewLine(), EOI)),
-            push(new ParagraphNode(new TextNode(popAs())))
+            push(new ParagraphNode()),
+            OneOrMore(FirstOf(
+                Sequence(Inline(), appendChild()),
+                Sequence(Text(), push(new TextNode(popAs())), appendChild())
+            ), Optional(NewLine()))
         );
     }
 
     /*
-     * Comment <- "#@#" Text? NewLine
+     * Inline <- FootnoteID
+     */
+    Rule Inline() {
+        return FootnoteID();
+    }
+
+    /*
+     * FootnoteID <- '@<fn>{' LimitedText('}') '}'
+     */
+    Rule FootnoteID() {
+        return Sequence(
+            "@<fn>{",
+            LimitedText("}"),
+            push(new FootnoteIDNode(popAs())),
+            "}"
+        );
+    }
+
+    /*
+     * Comment <- '#@#' Text? NewLine
      *
      * Textがpushした文字列は破棄する。
      */
@@ -150,14 +172,14 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Text <- !"#@#" NormalCharacter+
+     * Text <- !'#@#' (!Inline NormalCharacter)+
      *
      * マッチした文字列をpushする。
      */
     Rule Text() {
         return Sequence(
             TestNot("#@#"),
-            OneOrMore(NormalCharacter()),
+            OneOrMore(TestNot(Inline()), NormalCharacter()),
             push(match())
         );
     }
@@ -185,7 +207,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Space <- (" " / "\t")+
+     * Space <- (' ' / '\t')+
      */
     Rule Space() {
         return OneOrMore(
@@ -194,12 +216,12 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * NewLine <- "\n" / ("\r" "\n"?)
+     * NewLine <- '\n' / ('\r' '\n'?)
      */
     Rule NewLine() {
         return FirstOf(
-            '\n',
-            Sequence('\r', Optional('\n'))
+            "\n",
+            Sequence("\r", Optional("\n"))
         );
     }
 
@@ -225,20 +247,6 @@ class ReviewParser extends BaseParser<Object> {
         Node child = popAs();
         ParentNode parent = peekAs();
         parent.appendChild(child);
-        return true;
-    }
-
-    /*
-     * 文字列を結合する。
-     *
-     * スタックのトップに後ろの文字列、その次に前の文字列が積まれている必要がある。
-     *
-     * @return {@code true}
-     */
-    boolean appendString() {
-        // 文字列を結合する
-        String suffix = popAs();
-        push(popAs() + suffix);
         return true;
     }
 

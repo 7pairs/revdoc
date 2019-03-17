@@ -84,6 +84,13 @@ public interface Visitor {
     void visit(ParagraphNode node);
 
     /**
+     * {@code FootnoteIDNode} に対する処理を実行する。
+     *
+     * @param node 処理対象のノード
+     */
+    void visit(FootnoteIDNode node);
+
+    /**
      * {@code TextNode} に対する処理を実行する。
      *
      * @param node 処理対象のノード

@@ -16,39 +16,14 @@
 package blue.lions.revdoc.ast;
 
 /**
- * 脚注を表現するノード。
+ * 一行段落を表現するノード。
  */
-public class FootnoteNode extends ParentNode {
-
-    /* ID */
-    private String id;
-
-    /**
-     * {@code FootnoteNode} を構築する。
-     *
-     * @param id 脚注ID
-     * @param singleLineParagraphNode 脚注内容
-     */
-    public FootnoteNode(String id, SingleLineParagraphNode singleLineParagraphNode) {
-        // フィールドを初期化する
-        this.id = id;
-        appendChild(singleLineParagraphNode);
-    }
-
-    /**
-     * IDを取得する。
-     *
-     * @return ID
-     */
-    public String getId() {
-        // IDを返す
-        return id;
-    }
+public class SingleLineParagraphNode extends ParentNode {
 
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // FootnoteNodeに対する処理を実行する
+        // SingleLineParagraphNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

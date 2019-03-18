@@ -27,6 +27,7 @@ import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.ParagraphNode;
 import blue.lions.revdoc.ast.PartNode;
 import blue.lions.revdoc.ast.RootNode;
+import blue.lions.revdoc.ast.SingleLineParagraphNode;
 import blue.lions.revdoc.ast.TextNode;
 import blue.lions.revdoc.ast.UnorderedListItemNode;
 import blue.lions.revdoc.ast.UnorderedListNode;
@@ -151,9 +152,8 @@ public class WordVisitor implements Visitor {
     public void visit(FootnoteNode node) {
         // 脚注を作成する
         XWPFFootnote footnote = document.createFootnote();
-        XWPFParagraph paragraph = footnote.createParagraph();
+        paragraph = footnote.createParagraph();
         for (Node child : node.getChildren()) {
-            run = paragraph.createRun();
             child.accept(this);
         }
         footnotes.put(node.getId(), footnote);
@@ -178,7 +178,6 @@ public class WordVisitor implements Visitor {
             CTDecimalNumber ilvl = CTDecimalNumber.Factory.newInstance();
             ilvl.setVal(BigInteger.valueOf(node.getLevel() - 1));
             paragraph.getCTP().getPPr().getNumPr().setIlvl(ilvl);
-            run = paragraph.createRun();
             child.accept(this);
         }
     }
@@ -188,6 +187,16 @@ public class WordVisitor implements Visitor {
     public void visit(ParagraphNode node) {
         // 段落を出力する
         paragraph = document.createParagraph();
+        for (Node child : node.getChildren()) {
+            run = paragraph.createRun();
+            child.accept(this);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(SingleLineParagraphNode node) {
+        // 段落を出力する
         for (Node child : node.getChildren()) {
             run = paragraph.createRun();
             child.accept(this);

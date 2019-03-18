@@ -22,6 +22,7 @@ import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.ParentNode;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.ParagraphNode;
+import blue.lions.revdoc.ast.SingleLineParagraphNode;
 import blue.lions.revdoc.ast.TextNode;
 import blue.lions.revdoc.ast.UnorderedListItemNode;
 import blue.lions.revdoc.ast.UnorderedListNode;
@@ -132,7 +133,7 @@ class ReviewParser extends BaseParser<Object> {
     Rule Heading(int level) {
         return Sequence(
             "=====".substring(5 - level),
-            Optional(FirstOf(Sequence("[", LimitedText("]"), "]"), push(""))),
+            Optional(FirstOf(Sequence("[", LimitedText(TestNot("]")), "]"), push(""))),
             ZeroOrMore(Space()),
             Text(),
             push(new HeadingNode(level, new TextNode(popAs()), popAs())),
@@ -141,16 +142,16 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Footnote <- '//footnote[' LimitedText(']') '][' LimitedText(']') ']' NewLine?
+     * Footnote <- '//footnote[' LimitedText(!']') '][' SingleLineParagraph(!']') ']' NewLine?
      */
     Rule Footnote() {
         return Sequence(
             "//footnote[",
-            LimitedText("]"),
+            LimitedText(TestNot("]")),
             "][",
-            LimitedText("]"),
+            SingleLineParagraph(TestNot("]")),
             swap(),
-            push(new FootnoteNode(popAs(), new TextNode(popAs()))),
+            push(new FootnoteNode(popAs(), popAs())),
             "]",
             Optional(NewLine())
         );
@@ -168,7 +169,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * UnorderedListItemNode <- '*'+ Space? Text NewLine?
+     * UnorderedListItemNode <- '*'+ Space? SingleLineParagraph(&ANY) NewLine?
      */
     Rule UnorderedListItem() {
         return Sequence(
@@ -176,9 +177,9 @@ class ReviewParser extends BaseParser<Object> {
             OneOrMore("*"),
             push(match()),
             Optional(Space()),
-            Text(),
+            SingleLineParagraph(Test(ANY)),
             swap(),
-            push(new UnorderedListItemNode(((String) pop()).length(), new TextNode(popAs()))),
+            push(new UnorderedListItemNode(((String) pop()).length(), popAs())),
             Optional(NewLine())
         );
     }
@@ -197,6 +198,20 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
+     * SingleLineParagraph <- (Inline / Text)+ NewLine?
+     */
+    Rule SingleLineParagraph(Rule rule) {
+        return Sequence(
+            push(new SingleLineParagraphNode()),
+            OneOrMore(FirstOf(
+                Sequence(Inline(), appendChild()),
+                Sequence(LimitedText(rule), push(new TextNode(popAs())), appendChild())
+            )),
+            Optional(NewLine())
+        );
+    }
+
+    /*
      * Inline <- FootnoteID
      */
     Rule Inline() {
@@ -204,12 +219,12 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * FootnoteID <- '@<fn>{' LimitedText('}') '}'
+     * FootnoteID <- '@<fn>{' LimitedText(!'}') '}'
      */
     Rule FootnoteID() {
         return Sequence(
             "@<fn>{",
-            LimitedText("}"),
+            LimitedText(TestNot("}")),
             push(new FootnoteIDNode(popAs())),
             "}"
         );
@@ -231,24 +246,21 @@ class ReviewParser extends BaseParser<Object> {
     /*
      * Text <- IsNotBlock (!Inline NormalCharacter)+
      *
-     * マッチした文字列をpushする。
+     * 共通RuleのLimitedTextに任せる。
      */
     Rule Text() {
-        return Sequence(
-            IsNotBlock(),
-            OneOrMore(TestNot(Inline()), NormalCharacter()),
-            push(match())
-        );
+        return LimitedText(Test(ANY));
     }
 
     /*
-     * LimitedText <- (!exclusion NormalCharacter)*
+     * LimitedText <- IsNotBlock (rule !Inline NormalCharacter)*
      *
      * マッチした文字列をpushする。
      */
-    Rule LimitedText(String exclusion) {
+    Rule LimitedText(Rule rule) {
         return Sequence(
-            OneOrMore(TestNot(exclusion), NormalCharacter()),
+            IsNotBlock(),
+            OneOrMore(rule, TestNot(Inline()), NormalCharacter()),
             push(match())
         );
     }

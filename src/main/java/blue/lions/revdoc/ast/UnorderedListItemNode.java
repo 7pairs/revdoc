@@ -27,12 +27,12 @@ public class UnorderedListItemNode extends ParentNode {
      * {@code UnorderedListItemNode} を構築する。
      *
      * @param level ネストレベル
-     * @param textNode 要素内容
+     * @param singleLineParagraphNode 要素内容
      */
-    public UnorderedListItemNode(int level, TextNode textNode) {
+    public UnorderedListItemNode(int level, SingleLineParagraphNode singleLineParagraphNode) {
         // フィールドを初期化する
         this.level = level;
-        appendChild(textNode);
+        appendChild(singleLineParagraphNode);
     }
 
     /**

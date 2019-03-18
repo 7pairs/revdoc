@@ -60,7 +60,7 @@ public class WordWriter extends Writer {
             OutputStream outputStream = Files.newOutputStream(Paths.get(outputFilePath))
         ) {
             WordVisitor wordVisitor = new WordVisitor(document);
-            wordVisitor.accept(ast);
+            ast.accept(wordVisitor);
             document.write(outputStream);
         } catch (IOException e) {
             e.printStackTrace();

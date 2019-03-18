@@ -19,26 +19,40 @@ import blue.lions.revdoc.ast.AppendixNode;
 import blue.lions.revdoc.ast.BackMatterNode;
 import blue.lions.revdoc.ast.BodyMatterNode;
 import blue.lions.revdoc.ast.ChapterNode;
+import blue.lions.revdoc.ast.FootnoteIDNode;
+import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.FrontMatterNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.ParagraphNode;
-import blue.lions.revdoc.ast.ParentNode;
 import blue.lions.revdoc.ast.PartNode;
 import blue.lions.revdoc.ast.RootNode;
 import blue.lions.revdoc.ast.TextNode;
 import blue.lions.revdoc.ast.Visitor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFFootnote;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 抽象構文木を辿ってWordファイルを出力するVisitor。
  */
 public class WordVisitor implements Visitor {
 
-    /* Wordドキュメント */
+    /* 処理中のWordドキュメント */
     private XWPFDocument document;
+
+    /* 処理中の段落 */
+    private XWPFParagraph paragraph;
+
+    /* 処理中のラン */
+    private XWPFRun run;
+
+    /* 解析済みの脚注 */
+    private Map<String, XWPFFootnote> footnotes;
 
     /**
      * {@code WordVisitor} オブジェクトを構築する。
@@ -50,63 +64,70 @@ public class WordVisitor implements Visitor {
         this.document = document;
     }
 
-    /**
-     * 抽象構文木を辿り、それぞれのノードに対する処理を実行する。
-     *
-     * @param node 抽象構文木
-     */
-    public void accept(Node node) {
-        // 指定されたノードに対する処理を実行する
-        node.accept(this);
-
-        // 子ノードに対する処理を実行する
-        if (node instanceof ParentNode) {
-            for (Node child : ((ParentNode) node).getChildren()) {
-                accept(child);
-            }
+    /** {@inheritDoc} */
+    @Override
+    public void visit(RootNode node) {
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public void visit(RootNode node) {
-
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void visit(FrontMatterNode node) {
-
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            child.accept(this);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void visit(BodyMatterNode node) {
-
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            child.accept(this);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void visit(AppendixNode node) {
-
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            child.accept(this);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void visit(BackMatterNode node) {
-
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            child.accept(this);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void visit(PartNode node) {
-
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            child.accept(this);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void visit(ChapterNode node) {
+        // 脚注を初期化する
+        footnotes = new HashMap<>();
 
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            child.accept(this);
+        }
     }
 
     /** {@inheritDoc} */
@@ -114,24 +135,48 @@ public class WordVisitor implements Visitor {
     public void visit(HeadingNode node) {
         // 見出しを出力する
         XWPFParagraph paragraph = document.createParagraph();
-        XWPFRun run = paragraph.createRun();
-        run.setText(((TextNode) node.getChildren().get(0)).getText());
+        run = paragraph.createRun();
         run.setBold(true);
-        // ToDo: 見出しのスタイルを適用する
+        for (Node child : node.getChildren()) {
+            child.accept(this);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(FootnoteNode node) {
+        // 脚注を作成する
+        XWPFFootnote footnote = document.createFootnote();
+        XWPFParagraph paragraph = footnote.createParagraph();
+        for (Node child : node.getChildren()) {
+            run = paragraph.createRun();
+            child.accept(this);
+        }
+        footnotes.put(node.getId(), footnote);
     }
 
     /** {@inheritDoc} */
     @Override
     public void visit(ParagraphNode node) {
         // 段落を出力する
-        XWPFParagraph paragraph = document.createParagraph();
-        XWPFRun run = paragraph.createRun();
-        run.setText(((TextNode) node.getChildren().get(0)).getText());
+        paragraph = document.createParagraph();
+        for (Node child : node.getChildren()) {
+            run = paragraph.createRun();
+            child.accept(this);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(FootnoteIDNode node) {
+        // 脚注を関連付ける
+        paragraph.addFootnoteReference(footnotes.get(node.getId()));
     }
 
     /** {@inheritDoc} */
     @Override
     public void visit(TextNode node) {
-        // TextNodeの内容は親ノードで出力する
+        // テキストの内容を出力する
+        run.setText(node.getText());
     }
 }

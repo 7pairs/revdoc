@@ -28,12 +28,16 @@ import blue.lions.revdoc.ast.ParagraphNode;
 import blue.lions.revdoc.ast.PartNode;
 import blue.lions.revdoc.ast.RootNode;
 import blue.lions.revdoc.ast.TextNode;
+import blue.lions.revdoc.ast.UnorderedListItemNode;
+import blue.lions.revdoc.ast.UnorderedListNode;
 import blue.lions.revdoc.ast.Visitor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFootnote;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -153,6 +157,30 @@ public class WordVisitor implements Visitor {
             child.accept(this);
         }
         footnotes.put(node.getId(), footnote);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(UnorderedListNode node) {
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            child.accept(this);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(UnorderedListItemNode node) {
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            paragraph = document.createParagraph();
+            paragraph.setNumID(BigInteger.valueOf(2));
+            CTDecimalNumber ilvl = CTDecimalNumber.Factory.newInstance();
+            ilvl.setVal(BigInteger.valueOf(node.getLevel() - 1));
+            paragraph.getCTP().getPPr().getNumPr().setIlvl(ilvl);
+            run = paragraph.createRun();
+            child.accept(this);
+        }
     }
 
     /** {@inheritDoc} */

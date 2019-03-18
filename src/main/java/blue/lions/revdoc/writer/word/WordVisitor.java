@@ -52,7 +52,7 @@ public class WordVisitor implements Visitor {
     private XWPFRun run;
 
     /* 解析済みの脚注 */
-    private Map<String, XWPFFootnote> footnotes = new HashMap<>();
+    private Map<String, XWPFFootnote> footnotes;
 
     /**
      * {@code WordVisitor} オブジェクトを構築する。
@@ -121,6 +121,9 @@ public class WordVisitor implements Visitor {
     /** {@inheritDoc} */
     @Override
     public void visit(ChapterNode node) {
+        // 脚注を初期化する
+        footnotes = new HashMap<>();
+
         // 子ノードを辿って処理を実行する
         for (Node child : node.getChildren()) {
             child.accept(this);

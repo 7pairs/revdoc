@@ -182,8 +182,7 @@ class ReviewParser extends BaseParser<Object> {
     Rule Comment() {
         return Sequence(
             "#@#",
-            Optional(Text()),
-            drop(),
+            Optional(Sequence(Text(), drop())),
             Optional(NewLine())
         );
     }

@@ -18,6 +18,8 @@ package blue.lions.revdoc.reader.review;
 import static org.assertj.core.api.Assertions.*;
 
 import blue.lions.revdoc.ast.ChapterNode;
+import blue.lions.revdoc.ast.FootnoteIDNode;
+import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.ParagraphNode;
 import blue.lions.revdoc.ast.ParentNode;
@@ -168,6 +170,37 @@ public class ReviewParserTest {
     }
 
     @Test
+    @DisplayName("ReviewParser : Footnote をパースしたとき : FootnoteNode に変換されること")
+    public void ReviewParser_parseFootnote_convertFootnoteNode() {
+        final Class EXPECTED_CLASS = FootnoteNode.class;
+        final String EXPECTED_ID1 = "footnote1";
+        final String EXPECTED_TEXT1 = "ひとつ目の脚注です。";
+        final String EXPECTED_ID2 = "footnote2";
+        final String EXPECTED_TEXT2 = "ふたつ目の脚注です。";
+
+        String review = String.format(
+            "//footnote[%s][%s]\n//footnote[%s][%s]\n",
+            EXPECTED_ID1,
+            EXPECTED_TEXT1,
+            EXPECTED_ID2,
+            EXPECTED_TEXT2
+        );
+        ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
+        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+
+        assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
+        assertThat(((FootnoteNode) result.resultValue.getChildren().get(0)).getId()).isEqualTo(EXPECTED_ID2);
+        assertThat(
+            ((TextNode) ((FootnoteNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText()
+        ).isEqualTo(EXPECTED_TEXT2);
+        assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
+        assertThat(((FootnoteNode) result.resultValue.getChildren().get(1)).getId()).isEqualTo(EXPECTED_ID1);
+        assertThat(
+            ((TextNode) ((FootnoteNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText()
+        ).isEqualTo(EXPECTED_TEXT1);
+    }
+
+    @Test
     @DisplayName("ReviewParser : Paragraph をパースしたとき : ParagraphNode に変換されること")
     public void ReviewParser_parseParagraph_convertParagraphNode() {
         final Class EXPECTED_CLASS = ParagraphNode.class;
@@ -190,6 +223,29 @@ public class ReviewParserTest {
         assertThat(
             ((TextNode) ((ParagraphNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText()
         ).isEqualTo(EXPECTED_TEXT3);
+    }
+
+    @Test
+    @DisplayName("ReviewParser : FootnoteID をパースしたとき : FootnoteIDNode に変換されること")
+    public void ReviewParser_parseFootnoteID_convertFootnoteIDNode() {
+        final Class EXPECTED_CLASS = FootnoteIDNode.class;
+        final String EXPECTED_ID1 = "fn1";
+        final String EXPECTED_ID2 = "fn2";
+
+        String review = String.format("パグリアルーロ@<fn>{%s}とシアンフロッコ@<fn>{%s}", EXPECTED_ID1, EXPECTED_ID2);
+        ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
+        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+
+        assertThat(((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(1))
+            .isInstanceOf(EXPECTED_CLASS);
+        assertThat(
+            ((FootnoteIDNode) ((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(1)).getId()
+        ).isEqualTo(EXPECTED_ID1);
+        assertThat(((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(3))
+            .isInstanceOf(EXPECTED_CLASS);
+        assertThat(
+            ((FootnoteIDNode) ((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(3)).getId()
+        ).isEqualTo(EXPECTED_ID2);
     }
 
     @Test

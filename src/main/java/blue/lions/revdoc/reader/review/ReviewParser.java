@@ -34,7 +34,7 @@ import org.parboiled.annotations.BuildParseTree;
 class ReviewParser extends BaseParser<Object> {
 
     /*
-     * Chapter <- (BlankLine* (Block / Comment))*
+     * Chapter <- (BlankLine / Comment)* (Block (BlankLine / Comment)*)*
      *
      * Block要素はRule内で結果Nodeをpushしている。
      * その結果NodeをChapterNodeの子に追加する。
@@ -42,7 +42,8 @@ class ReviewParser extends BaseParser<Object> {
     Rule Chapter() {
         return Sequence(
             push(new ChapterNode()),
-            ZeroOrMore(ZeroOrMore(FirstOf(BlankLine(), Comment())), Block(), appendChild())
+            ZeroOrMore(FirstOf(BlankLine(), Comment())),
+            ZeroOrMore(Block(), appendChild(), ZeroOrMore(FirstOf(BlankLine(), Comment())))
         );
     }
 
@@ -64,7 +65,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading5 <- '=====' ('[' LimitedText(']') ']')? Space* Text NewLine
+     * Heading5 <- '=====' ('[' LimitedText(']') ']')? Space* Text NewLine?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -73,7 +74,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading4 <- '====' ('[' LimitedText(']') ']')? Space* Text NewLine
+     * Heading4 <- '====' ('[' LimitedText(']') ']')? Space* Text NewLine?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -82,7 +83,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading3 <- '===' ('[' LimitedText(']') ']')? Space* Text NewLine
+     * Heading3 <- '===' ('[' LimitedText(']') ']')? Space* Text NewLine?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -91,7 +92,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading2 <- '==' ('[' LimitedText(']') ']')? Space* Text NewLine
+     * Heading2 <- '==' ('[' LimitedText(']') ']')? Space* Text NewLine?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -100,7 +101,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading1 <- '=' ('[' LimitedText(']') ']')? Space* Text NewLine
+     * Heading1 <- '=' ('[' LimitedText(']') ']')? Space* Text NewLine?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -121,12 +122,12 @@ class ReviewParser extends BaseParser<Object> {
             ZeroOrMore(Space()),
             Text(),
             push(new HeadingNode(level, new TextNode(popAs()), popAs())),
-            NewLine()
+            Optional(NewLine())
         );
     }
 
     /*
-     * Footnote <- '//footnote[' LimitedText(']') '][' LimitedText(']') ']' NewLine
+     * Footnote <- '//footnote[' LimitedText(']') '][' LimitedText(']') ']' NewLine?
      */
     Rule Footnote() {
         return Sequence(
@@ -137,7 +138,7 @@ class ReviewParser extends BaseParser<Object> {
             swap(),
             push(new FootnoteNode(popAs(), new TextNode(popAs()))),
             "]",
-            NewLine()
+            Optional(NewLine())
         );
     }
 
@@ -174,7 +175,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Comment <- '#@#' Text? NewLine
+     * Comment <- '#@#' Text? NewLine?
      *
      * Textがpushした文字列は破棄する。
      */
@@ -183,18 +184,19 @@ class ReviewParser extends BaseParser<Object> {
             "#@#",
             Optional(Text()),
             drop(),
-            NewLine()
+            Optional(NewLine())
         );
     }
 
     /*
-     * Text <- !'#@#' (!Inline NormalCharacter)+
+     * Text <- !'#@#' !'//' (!Inline NormalCharacter)+
      *
      * マッチした文字列をpushする。
      */
     Rule Text() {
         return Sequence(
             TestNot("#@#"),
+            TestNot("//"),
             OneOrMore(TestNot(Inline()), NormalCharacter()),
             push(match())
         );
@@ -262,7 +264,11 @@ class ReviewParser extends BaseParser<Object> {
         // 子ノードを追加する
         Node child = popAs();
         ParentNode parent = peekAs();
-        parent.appendChild(child);
+        if (child instanceof FootnoteNode) {
+            parent.appendChild(0, child);
+        } else {
+            parent.appendChild(child);
+        }
         return true;
     }
 

@@ -48,6 +48,17 @@ public abstract class ParentNode extends Node {
     }
 
     /**
+     * 子ノードを指定された場所に追加する。
+     *
+     * @param index 追加場所
+     * @param child 子ノード
+     */
+    public void appendChild(int index, Node child) {
+        // 子ノードを追加する
+        children.add(index, child);
+    }
+
+    /**
      * 複数の子ノードを追加する。
      *
      * @param children 子ノード

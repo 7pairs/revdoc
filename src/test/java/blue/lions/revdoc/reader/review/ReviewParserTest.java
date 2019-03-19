@@ -21,9 +21,12 @@ import blue.lions.revdoc.ast.ChapterNode;
 import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
+import blue.lions.revdoc.ast.InnerParagraphNode;
 import blue.lions.revdoc.ast.ParagraphNode;
 import blue.lions.revdoc.ast.ParentNode;
 import blue.lions.revdoc.ast.TextNode;
+import blue.lions.revdoc.ast.UnorderedListItemNode;
+import blue.lions.revdoc.ast.UnorderedListNode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.parboiled.Parboiled;
@@ -58,15 +61,22 @@ public class ReviewParserTest {
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getLevel()).isEqualTo(EXPECTED_LEVEL);
-        assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText())
-            .isEqualTo(EXPECTED_TEXT1);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getId()).isBlank();
+
+        HeadingNode headingNode1 = (HeadingNode) result.resultValue.getChildren().get(0);
+        assertThat(headingNode1.getLevel()).isEqualTo(EXPECTED_LEVEL);
+        assertThat(headingNode1.getId()).isBlank();
+
+        TextNode textNode1 = (TextNode) headingNode1.getChildren().get(0);
+        assertThat(textNode1.getText()).isEqualTo(EXPECTED_TEXT1);
+
         assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getLevel()).isEqualTo(EXPECTED_LEVEL);
-        assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText())
-            .isEqualTo(EXPECTED_TEXT2);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getId()).isEqualTo(EXPECTED_ID);
+
+        HeadingNode headingNode2 = (HeadingNode) result.resultValue.getChildren().get(1);
+        assertThat(headingNode2.getLevel()).isEqualTo(EXPECTED_LEVEL);
+        assertThat(headingNode2.getId()).isEqualTo(EXPECTED_ID);
+
+        TextNode textNode2 = (TextNode) headingNode2.getChildren().get(0);
+        assertThat(textNode2.getText()).isEqualTo(EXPECTED_TEXT2);
     }
 
     @Test
@@ -83,15 +93,22 @@ public class ReviewParserTest {
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getLevel()).isEqualTo(EXPECTED_LEVEL);
-        assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText())
-            .isEqualTo(EXPECTED_TEXT1);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getId()).isBlank();
+
+        HeadingNode headingNode1 = (HeadingNode) result.resultValue.getChildren().get(0);
+        assertThat(headingNode1.getLevel()).isEqualTo(EXPECTED_LEVEL);
+        assertThat(headingNode1.getId()).isBlank();
+
+        TextNode textNode1 = (TextNode) headingNode1.getChildren().get(0);
+        assertThat(textNode1.getText()).isEqualTo(EXPECTED_TEXT1);
+
         assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getLevel()).isEqualTo(EXPECTED_LEVEL);
-        assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText())
-            .isEqualTo(EXPECTED_TEXT2);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getId()).isEqualTo(EXPECTED_ID);
+
+        HeadingNode headingNode2 = (HeadingNode) result.resultValue.getChildren().get(1);
+        assertThat(headingNode2.getLevel()).isEqualTo(EXPECTED_LEVEL);
+        assertThat(headingNode2.getId()).isEqualTo(EXPECTED_ID);
+
+        TextNode textNode2 = (TextNode) headingNode2.getChildren().get(0);
+        assertThat(textNode2.getText()).isEqualTo(EXPECTED_TEXT2);
     }
 
     @Test
@@ -108,15 +125,22 @@ public class ReviewParserTest {
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getLevel()).isEqualTo(EXPECTED_LEVEL);
-        assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText())
-            .isEqualTo(EXPECTED_TEXT1);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getId()).isBlank();
+
+        HeadingNode headingNode1 = (HeadingNode) result.resultValue.getChildren().get(0);
+        assertThat(headingNode1.getLevel()).isEqualTo(EXPECTED_LEVEL);
+        assertThat(headingNode1.getId()).isBlank();
+
+        TextNode textNode1 = (TextNode) headingNode1.getChildren().get(0);
+        assertThat(textNode1.getText()).isEqualTo(EXPECTED_TEXT1);
+
         assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getLevel()).isEqualTo(EXPECTED_LEVEL);
-        assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText())
-            .isEqualTo(EXPECTED_TEXT2);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getId()).isEqualTo(EXPECTED_ID);
+
+        HeadingNode headingNode2 = (HeadingNode) result.resultValue.getChildren().get(1);
+        assertThat(headingNode2.getLevel()).isEqualTo(EXPECTED_LEVEL);
+        assertThat(headingNode2.getId()).isEqualTo(EXPECTED_ID);
+
+        TextNode textNode2 = (TextNode) headingNode2.getChildren().get(0);
+        assertThat(textNode2.getText()).isEqualTo(EXPECTED_TEXT2);
     }
 
     @Test
@@ -133,15 +157,22 @@ public class ReviewParserTest {
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getLevel()).isEqualTo(EXPECTED_LEVEL);
-        assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText())
-            .isEqualTo(EXPECTED_TEXT1);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getId()).isBlank();
+
+        HeadingNode headingNode1 = (HeadingNode) result.resultValue.getChildren().get(0);
+        assertThat(headingNode1.getLevel()).isEqualTo(EXPECTED_LEVEL);
+        assertThat(headingNode1.getId()).isBlank();
+
+        TextNode textNode1 = (TextNode) headingNode1.getChildren().get(0);
+        assertThat(textNode1.getText()).isEqualTo(EXPECTED_TEXT1);
+
         assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getLevel()).isEqualTo(EXPECTED_LEVEL);
-        assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText())
-            .isEqualTo(EXPECTED_TEXT2);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getId()).isEqualTo(EXPECTED_ID);
+
+        HeadingNode headingNode2 = (HeadingNode) result.resultValue.getChildren().get(1);
+        assertThat(headingNode2.getLevel()).isEqualTo(EXPECTED_LEVEL);
+        assertThat(headingNode2.getId()).isEqualTo(EXPECTED_ID);
+
+        TextNode textNode2 = (TextNode) headingNode2.getChildren().get(0);
+        assertThat(textNode2.getText()).isEqualTo(EXPECTED_TEXT2);
     }
 
     @Test
@@ -158,15 +189,22 @@ public class ReviewParserTest {
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getLevel()).isEqualTo(EXPECTED_LEVEL);
-        assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText())
-            .isEqualTo(EXPECTED_TEXT1);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(0)).getId()).isBlank();
+
+        HeadingNode headingNode1 = (HeadingNode) result.resultValue.getChildren().get(0);
+        assertThat(headingNode1.getLevel()).isEqualTo(EXPECTED_LEVEL);
+        assertThat(headingNode1.getId()).isBlank();
+
+        TextNode textNode1 = (TextNode) headingNode1.getChildren().get(0);
+        assertThat(textNode1.getText()).isEqualTo(EXPECTED_TEXT1);
+
         assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getLevel()).isEqualTo(EXPECTED_LEVEL);
-        assertThat(((TextNode) ((HeadingNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText())
-            .isEqualTo(EXPECTED_TEXT2);
-        assertThat(((HeadingNode) result.resultValue.getChildren().get(1)).getId()).isEqualTo(EXPECTED_ID);
+
+        HeadingNode headingNode2 = (HeadingNode) result.resultValue.getChildren().get(1);
+        assertThat(headingNode2.getLevel()).isEqualTo(EXPECTED_LEVEL);
+        assertThat(headingNode2.getId()).isEqualTo(EXPECTED_ID);
+
+        TextNode textNode2 = (TextNode) headingNode2.getChildren().get(0);
+        assertThat(textNode2.getText()).isEqualTo(EXPECTED_TEXT2);
     }
 
     @Test
@@ -189,15 +227,69 @@ public class ReviewParserTest {
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(((FootnoteNode) result.resultValue.getChildren().get(0)).getId()).isEqualTo(EXPECTED_ID2);
-        assertThat(
-            ((TextNode) ((FootnoteNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText()
-        ).isEqualTo(EXPECTED_TEXT2);
+
+        FootnoteNode footnoteNode1 = (FootnoteNode) result.resultValue.getChildren().get(0);
+        assertThat(footnoteNode1.getId()).isEqualTo(EXPECTED_ID2);
+
+        InnerParagraphNode innerParagraphNode1 = (InnerParagraphNode) footnoteNode1.getChildren().get(0);
+        TextNode textNode1 = (TextNode) innerParagraphNode1.getChildren().get(0);
+        assertThat(textNode1.getText()).isEqualTo(EXPECTED_TEXT2);
+
         assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(((FootnoteNode) result.resultValue.getChildren().get(1)).getId()).isEqualTo(EXPECTED_ID1);
-        assertThat(
-            ((TextNode) ((FootnoteNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText()
-        ).isEqualTo(EXPECTED_TEXT1);
+
+        FootnoteNode footnoteNode2 = (FootnoteNode) result.resultValue.getChildren().get(1);
+        assertThat(footnoteNode2.getId()).isEqualTo(EXPECTED_ID1);
+
+        InnerParagraphNode innerParagraphNode2 = (InnerParagraphNode) footnoteNode2.getChildren().get(0);
+        TextNode textNode2 = (TextNode) innerParagraphNode2.getChildren().get(0);
+        assertThat(textNode2.getText()).isEqualTo(EXPECTED_TEXT1);
+    }
+
+    @Test
+    @DisplayName("ReviewParser : UnorderedList をパースしたとき : UnorderedListNode に変換されること")
+    public void ReviewParser_parseUnorderedList_convertUnorderedListNode() {
+        final Class EXPECTED_CLASS = UnorderedListNode.class;
+        final String EXPECTED_ITEM1 = "山川 穂高";
+        final String EXPECTED_SUB_ITEM = "2018年 パ・リーグMVP";
+        final String EXPECTED_ITEM2 = "多和田 真三郎";
+        final String EXPECTED_ITEM3 = "外崎 修汰";
+
+        String review = String.format(
+            " * %s\n ** %s\n * %s\n * %s\n",
+            EXPECTED_ITEM1,
+            EXPECTED_SUB_ITEM,
+            EXPECTED_ITEM2,
+            EXPECTED_ITEM3
+        );
+        ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
+        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+
+        assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
+
+        UnorderedListNode unorderedListNode = (UnorderedListNode) result.resultValue.getChildren().get(0);
+        assertThat(unorderedListNode.getChildren().size()).isEqualTo(4);
+
+        UnorderedListItemNode unorderedListItemNode1 = (UnorderedListItemNode) unorderedListNode.getChildren().get(0);
+        UnorderedListItemNode unorderedListItemNode2 = (UnorderedListItemNode) unorderedListNode.getChildren().get(1);
+        UnorderedListItemNode unorderedListItemNode3 = (UnorderedListItemNode) unorderedListNode.getChildren().get(2);
+        UnorderedListItemNode unorderedListItemNode4 = (UnorderedListItemNode) unorderedListNode.getChildren().get(3);
+        assertThat(unorderedListItemNode1.getLevel()).isEqualTo(1);
+        assertThat(unorderedListItemNode2.getLevel()).isEqualTo(2);
+        assertThat(unorderedListItemNode3.getLevel()).isEqualTo(1);
+        assertThat(unorderedListItemNode4.getLevel()).isEqualTo(1);
+
+        InnerParagraphNode innerParagraphNode1 = (InnerParagraphNode) unorderedListItemNode1.getChildren().get(0);
+        TextNode textNode1 = (TextNode) innerParagraphNode1.getChildren().get(0);
+        InnerParagraphNode innerParagraphNode2 = (InnerParagraphNode) unorderedListItemNode2.getChildren().get(0);
+        TextNode textNode2 = (TextNode) innerParagraphNode2.getChildren().get(0);
+        InnerParagraphNode innerParagraphNode3 = (InnerParagraphNode) unorderedListItemNode3.getChildren().get(0);
+        TextNode textNode3 = (TextNode) innerParagraphNode3.getChildren().get(0);
+        InnerParagraphNode innerParagraphNode4 = (InnerParagraphNode) unorderedListItemNode4.getChildren().get(0);
+        TextNode textNode4 = (TextNode) innerParagraphNode4.getChildren().get(0);
+        assertThat(textNode1.getText()).isEqualTo(EXPECTED_ITEM1);
+        assertThat(textNode2.getText()).isEqualTo(EXPECTED_SUB_ITEM);
+        assertThat(textNode3.getText()).isEqualTo(EXPECTED_ITEM2);
+        assertThat(textNode4.getText()).isEqualTo(EXPECTED_ITEM3);
     }
 
     @Test
@@ -213,16 +305,18 @@ public class ReviewParserTest {
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(
-            ((TextNode) ((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText()
-        ).isEqualTo(EXPECTED_TEXT1);
-        assertThat(
-            ((TextNode) ((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(1)).getText()
-        ).isEqualTo(EXPECTED_TEXT2);
+
+        ParagraphNode paragraphNode1 = (ParagraphNode) result.resultValue.getChildren().get(0);
+        TextNode textNode1 = (TextNode) paragraphNode1.getChildren().get(0);
+        TextNode textNode2 = (TextNode) paragraphNode1.getChildren().get(1);
+        assertThat(textNode1.getText()).isEqualTo(EXPECTED_TEXT1);
+        assertThat(textNode2.getText()).isEqualTo(EXPECTED_TEXT2);
+
         assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(
-            ((TextNode) ((ParagraphNode) result.resultValue.getChildren().get(1)).getChildren().get(0)).getText()
-        ).isEqualTo(EXPECTED_TEXT3);
+
+        ParagraphNode paragraphNode2 = (ParagraphNode) result.resultValue.getChildren().get(1);
+        TextNode textNode3 = (TextNode) paragraphNode2.getChildren().get(0);
+        assertThat(textNode3.getText()).isEqualTo(EXPECTED_TEXT3);
     }
 
     @Test
@@ -236,16 +330,14 @@ public class ReviewParserTest {
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
-        assertThat(((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(1))
-            .isInstanceOf(EXPECTED_CLASS);
-        assertThat(
-            ((FootnoteIDNode) ((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(1)).getId()
-        ).isEqualTo(EXPECTED_ID1);
-        assertThat(((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(3))
-            .isInstanceOf(EXPECTED_CLASS);
-        assertThat(
-            ((FootnoteIDNode) ((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(3)).getId()
-        ).isEqualTo(EXPECTED_ID2);
+        ParagraphNode paragraphNode = (ParagraphNode) result.resultValue.getChildren().get(0);
+        assertThat(paragraphNode.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
+        assertThat(paragraphNode.getChildren().get(3)).isInstanceOf(EXPECTED_CLASS);
+
+        FootnoteIDNode footnoteIDNode1 = (FootnoteIDNode) paragraphNode.getChildren().get(1);
+        FootnoteIDNode footnoteIDNode2 = (FootnoteIDNode) paragraphNode.getChildren().get(3);
+        assertThat(footnoteIDNode1.getId()).isEqualTo(EXPECTED_ID1);
+        assertThat(footnoteIDNode2.getId()).isEqualTo(EXPECTED_ID2);
     }
 
     @Test
@@ -260,8 +352,9 @@ public class ReviewParserTest {
 
         assertThat(result.resultValue.getChildren().size()).isEqualTo(1);
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
-        assertThat(
-            ((TextNode) ((ParagraphNode) result.resultValue.getChildren().get(0)).getChildren().get(0)).getText()
-        ).isEqualTo(EXPECTED_TEXT);
+
+        ParagraphNode paragraphNode = (ParagraphNode) result.resultValue.getChildren().get(0);
+        TextNode textNode = (TextNode) paragraphNode.getChildren().get(0);
+        assertThat(textNode.getText()).isEqualTo(EXPECTED_TEXT);
     }
 }

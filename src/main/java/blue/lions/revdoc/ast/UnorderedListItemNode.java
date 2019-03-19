@@ -16,39 +16,39 @@
 package blue.lions.revdoc.ast;
 
 /**
- * 脚注を表現するノード。
+ * 番号なしリストの要素を表現するノード。
  */
-public class FootnoteNode extends ParentNode {
+public class UnorderedListItemNode extends ParentNode {
 
-    /* ID */
-    private String id;
+    /* ネストレベル */
+    private int level;
 
     /**
-     * {@code FootnoteNode} を構築する。
+     * {@code UnorderedListItemNode} を構築する。
      *
-     * @param id 脚注ID
-     * @param innerParagraphNode 脚注内容
+     * @param level ネストレベル
+     * @param innerParagraphNode 要素内容
      */
-    public FootnoteNode(String id, InnerParagraphNode innerParagraphNode) {
+    public UnorderedListItemNode(int level, InnerParagraphNode innerParagraphNode) {
         // フィールドを初期化する
-        this.id = id;
+        this.level = level;
         appendChild(innerParagraphNode);
     }
 
     /**
-     * IDを取得する。
+     * ネストレベルを取得する。
      *
-     * @return ID
+     * @return ネストレベル
      */
-    public String getId() {
-        // IDを返す
-        return id;
+    public int getLevel() {
+        // ネストレベルを返す
+        return level;
     }
 
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // FootnoteNodeに対する処理を実行する
+        // UnorderedListItemNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

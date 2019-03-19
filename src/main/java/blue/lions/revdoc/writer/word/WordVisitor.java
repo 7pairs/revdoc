@@ -23,17 +23,21 @@ import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.FrontMatterNode;
 import blue.lions.revdoc.ast.HeadingNode;
+import blue.lions.revdoc.ast.InnerParagraphNode;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.ParagraphNode;
 import blue.lions.revdoc.ast.PartNode;
 import blue.lions.revdoc.ast.RootNode;
 import blue.lions.revdoc.ast.TextNode;
+import blue.lions.revdoc.ast.UnorderedListItemNode;
+import blue.lions.revdoc.ast.UnorderedListNode;
 import blue.lions.revdoc.ast.Visitor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFootnote;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -147,9 +151,8 @@ public class WordVisitor implements Visitor {
     public void visit(FootnoteNode node) {
         // 脚注を作成する
         XWPFFootnote footnote = document.createFootnote();
-        XWPFParagraph paragraph = footnote.createParagraph();
+        paragraph = footnote.createParagraph();
         for (Node child : node.getChildren()) {
-            run = paragraph.createRun();
             child.accept(this);
         }
         footnotes.put(node.getId(), footnote);
@@ -157,9 +160,40 @@ public class WordVisitor implements Visitor {
 
     /** {@inheritDoc} */
     @Override
+    public void visit(UnorderedListNode node) {
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            child.accept(this);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(UnorderedListItemNode node) {
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            paragraph = document.createParagraph();
+            paragraph.setNumID(BigInteger.valueOf(2));
+            paragraph.getCTP().getPPr().getNumPr().addNewIlvl().setVal(BigInteger.valueOf(node.getLevel() - 1));
+            child.accept(this);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void visit(ParagraphNode node) {
         // 段落を出力する
         paragraph = document.createParagraph();
+        for (Node child : node.getChildren()) {
+            run = paragraph.createRun();
+            child.accept(this);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(InnerParagraphNode node) {
+        // 段落を出力する
         for (Node child : node.getChildren()) {
             run = paragraph.createRun();
             child.accept(this);

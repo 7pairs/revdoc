@@ -36,7 +36,6 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFootnote;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -175,9 +174,7 @@ public class WordVisitor implements Visitor {
         for (Node child : node.getChildren()) {
             paragraph = document.createParagraph();
             paragraph.setNumID(BigInteger.valueOf(2));
-            CTDecimalNumber ilvl = CTDecimalNumber.Factory.newInstance();
-            ilvl.setVal(BigInteger.valueOf(node.getLevel() - 1));
-            paragraph.getCTP().getPPr().getNumPr().setIlvl(ilvl);
+            paragraph.getCTP().getPPr().getNumPr().addNewIlvl().setVal(BigInteger.valueOf(node.getLevel() - 1));
             child.accept(this);
         }
     }

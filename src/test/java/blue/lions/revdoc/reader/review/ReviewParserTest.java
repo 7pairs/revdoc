@@ -21,9 +21,9 @@ import blue.lions.revdoc.ast.ChapterNode;
 import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
+import blue.lions.revdoc.ast.InnerParagraphNode;
 import blue.lions.revdoc.ast.ParagraphNode;
 import blue.lions.revdoc.ast.ParentNode;
-import blue.lions.revdoc.ast.SingleLineParagraphNode;
 import blue.lions.revdoc.ast.TextNode;
 import blue.lions.revdoc.ast.UnorderedListItemNode;
 import blue.lions.revdoc.ast.UnorderedListNode;
@@ -231,9 +231,8 @@ public class ReviewParserTest {
         FootnoteNode footnoteNode1 = (FootnoteNode) result.resultValue.getChildren().get(0);
         assertThat(footnoteNode1.getId()).isEqualTo(EXPECTED_ID2);
 
-        SingleLineParagraphNode singleLineParagraphNode1
-            = (SingleLineParagraphNode) footnoteNode1.getChildren().get(0);
-        TextNode textNode1 = (TextNode) singleLineParagraphNode1.getChildren().get(0);
+        InnerParagraphNode innerParagraphNode1 = (InnerParagraphNode) footnoteNode1.getChildren().get(0);
+        TextNode textNode1 = (TextNode) innerParagraphNode1.getChildren().get(0);
         assertThat(textNode1.getText()).isEqualTo(EXPECTED_TEXT2);
 
         assertThat(result.resultValue.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
@@ -241,9 +240,8 @@ public class ReviewParserTest {
         FootnoteNode footnoteNode2 = (FootnoteNode) result.resultValue.getChildren().get(1);
         assertThat(footnoteNode2.getId()).isEqualTo(EXPECTED_ID1);
 
-        SingleLineParagraphNode singleLineParagraphNode2
-            = (SingleLineParagraphNode) footnoteNode2.getChildren().get(0);
-        TextNode textNode2 = (TextNode) singleLineParagraphNode2.getChildren().get(0);
+        InnerParagraphNode innerParagraphNode2 = (InnerParagraphNode) footnoteNode2.getChildren().get(0);
+        TextNode textNode2 = (TextNode) innerParagraphNode2.getChildren().get(0);
         assertThat(textNode2.getText()).isEqualTo(EXPECTED_TEXT1);
     }
 
@@ -280,18 +278,14 @@ public class ReviewParserTest {
         assertThat(unorderedListItemNode3.getLevel()).isEqualTo(1);
         assertThat(unorderedListItemNode4.getLevel()).isEqualTo(1);
 
-        SingleLineParagraphNode singleLineParagraphNode1
-            = (SingleLineParagraphNode) unorderedListItemNode1.getChildren().get(0);
-        TextNode textNode1 = (TextNode) singleLineParagraphNode1.getChildren().get(0);
-        SingleLineParagraphNode singleLineParagraphNode2
-            = (SingleLineParagraphNode) unorderedListItemNode2.getChildren().get(0);
-        TextNode textNode2 = (TextNode) singleLineParagraphNode2.getChildren().get(0);
-        SingleLineParagraphNode singleLineParagraphNode3
-            = (SingleLineParagraphNode) unorderedListItemNode3.getChildren().get(0);
-        TextNode textNode3 = (TextNode) singleLineParagraphNode3.getChildren().get(0);
-        SingleLineParagraphNode singleLineParagraphNode4
-            = (SingleLineParagraphNode) unorderedListItemNode4.getChildren().get(0);
-        TextNode textNode4 = (TextNode) singleLineParagraphNode4.getChildren().get(0);
+        InnerParagraphNode innerParagraphNode1 = (InnerParagraphNode) unorderedListItemNode1.getChildren().get(0);
+        TextNode textNode1 = (TextNode) innerParagraphNode1.getChildren().get(0);
+        InnerParagraphNode innerParagraphNode2 = (InnerParagraphNode) unorderedListItemNode2.getChildren().get(0);
+        TextNode textNode2 = (TextNode) innerParagraphNode2.getChildren().get(0);
+        InnerParagraphNode innerParagraphNode3 = (InnerParagraphNode) unorderedListItemNode3.getChildren().get(0);
+        TextNode textNode3 = (TextNode) innerParagraphNode3.getChildren().get(0);
+        InnerParagraphNode innerParagraphNode4 = (InnerParagraphNode) unorderedListItemNode4.getChildren().get(0);
+        TextNode textNode4 = (TextNode) innerParagraphNode4.getChildren().get(0);
         assertThat(textNode1.getText()).isEqualTo(EXPECTED_ITEM1);
         assertThat(textNode2.getText()).isEqualTo(EXPECTED_SUB_ITEM);
         assertThat(textNode3.getText()).isEqualTo(EXPECTED_ITEM2);

@@ -27,12 +27,12 @@ public class FootnoteNode extends ParentNode {
      * {@code FootnoteNode} を構築する。
      *
      * @param id 脚注ID
-     * @param singleLineParagraphNode 脚注内容
+     * @param innerParagraphNode 脚注内容
      */
-    public FootnoteNode(String id, SingleLineParagraphNode singleLineParagraphNode) {
+    public FootnoteNode(String id, InnerParagraphNode innerParagraphNode) {
         // フィールドを初期化する
         this.id = id;
-        appendChild(singleLineParagraphNode);
+        appendChild(innerParagraphNode);
     }
 
     /**

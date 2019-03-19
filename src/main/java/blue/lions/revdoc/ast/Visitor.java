@@ -105,11 +105,11 @@ public interface Visitor {
     void visit(ParagraphNode node);
 
     /**
-     * {@code SingleLineParagraphNode} に対する処理を実行する。
+     * {@code InnerParagraphNode} に対する処理を実行する。
      *
      * @param node 処理対象のノード
      */
-    void visit(SingleLineParagraphNode node);
+    void visit(InnerParagraphNode node);
 
     /**
      * {@code FootnoteIDNode} に対する処理を実行する。

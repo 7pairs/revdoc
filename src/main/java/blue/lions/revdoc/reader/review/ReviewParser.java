@@ -19,10 +19,10 @@ import blue.lions.revdoc.ast.ChapterNode;
 import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
-import blue.lions.revdoc.ast.ParentNode;
+import blue.lions.revdoc.ast.InnerParagraphNode;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.ParagraphNode;
-import blue.lions.revdoc.ast.SingleLineParagraphNode;
+import blue.lions.revdoc.ast.ParentNode;
 import blue.lions.revdoc.ast.TextNode;
 import blue.lions.revdoc.ast.UnorderedListItemNode;
 import blue.lions.revdoc.ast.UnorderedListNode;
@@ -142,14 +142,14 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Footnote <- '//footnote[' LimitedText(!']') '][' SingleLineParagraph(!']') ']' NewLine?
+     * Footnote <- '//footnote[' LimitedText(!']') '][' InnerParagraph(!']') ']' NewLine?
      */
     Rule Footnote() {
         return Sequence(
             "//footnote[",
             LimitedText(TestNot("]")),
             "][",
-            SingleLineParagraph(TestNot("]")),
+            InnerParagraph(TestNot("]")),
             swap(),
             push(new FootnoteNode(popAs(), popAs())),
             "]",
@@ -169,7 +169,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * UnorderedListItemNode <- '*'+ Space? SingleLineParagraph(&ANY) NewLine?
+     * UnorderedListItemNode <- '*'+ Space? InnerParagraph(&ANY) NewLine?
      */
     Rule UnorderedListItem() {
         return Sequence(
@@ -177,7 +177,7 @@ class ReviewParser extends BaseParser<Object> {
             OneOrMore("*"),
             push(match()),
             Optional(Space()),
-            SingleLineParagraph(Test(ANY)),
+            InnerParagraph(Test(ANY)),
             swap(),
             push(new UnorderedListItemNode(((String) pop()).length(), popAs())),
             Optional(NewLine())
@@ -198,11 +198,11 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * SingleLineParagraph <- (Inline / Text)+ NewLine?
+     * InnerParagraph <- (Inline / Text)+ NewLine?
      */
-    Rule SingleLineParagraph(Rule rule) {
+    Rule InnerParagraph(Rule rule) {
         return Sequence(
-            push(new SingleLineParagraphNode()),
+            push(new InnerParagraphNode()),
             OneOrMore(FirstOf(
                 Sequence(Inline(), appendChild()),
                 Sequence(LimitedText(rule), push(new TextNode(popAs())), appendChild())

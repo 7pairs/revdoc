@@ -16,9 +16,9 @@
 package blue.lions.revdoc.ast;
 
 /**
- * 一行段落を表現するノード。
+ * 内部段落を表現するノード。
  */
-public class SingleLineParagraphNode extends ParentNode {
+public class InnerParagraphNode extends ParentNode {
 
     /** {@inheritDoc} */
     @Override

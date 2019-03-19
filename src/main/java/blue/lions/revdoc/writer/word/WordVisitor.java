@@ -23,11 +23,11 @@ import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.FrontMatterNode;
 import blue.lions.revdoc.ast.HeadingNode;
+import blue.lions.revdoc.ast.InnerParagraphNode;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.ParagraphNode;
 import blue.lions.revdoc.ast.PartNode;
 import blue.lions.revdoc.ast.RootNode;
-import blue.lions.revdoc.ast.SingleLineParagraphNode;
 import blue.lions.revdoc.ast.TextNode;
 import blue.lions.revdoc.ast.UnorderedListItemNode;
 import blue.lions.revdoc.ast.UnorderedListNode;
@@ -192,7 +192,7 @@ public class WordVisitor implements Visitor {
 
     /** {@inheritDoc} */
     @Override
-    public void visit(SingleLineParagraphNode node) {
+    public void visit(InnerParagraphNode node) {
         // 段落を出力する
         for (Node child : node.getChildren()) {
             run = paragraph.createRun();

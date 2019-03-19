@@ -25,6 +25,8 @@ import blue.lions.revdoc.ast.FrontMatterNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.InnerParagraphNode;
 import blue.lions.revdoc.ast.Node;
+import blue.lions.revdoc.ast.OrderedListItemNode;
+import blue.lions.revdoc.ast.OrderedListNode;
 import blue.lions.revdoc.ast.ParagraphNode;
 import blue.lions.revdoc.ast.PartNode;
 import blue.lions.revdoc.ast.RootNode;
@@ -175,6 +177,26 @@ public class WordVisitor implements Visitor {
             paragraph = document.createParagraph();
             paragraph.setNumID(BigInteger.valueOf(2));
             paragraph.getCTP().getPPr().getNumPr().addNewIlvl().setVal(BigInteger.valueOf(node.getLevel() - 1));
+            child.accept(this);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(OrderedListNode node) {
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            child.accept(this);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(OrderedListItemNode node) {
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            paragraph = document.createParagraph();
+            paragraph.setNumID(BigInteger.valueOf(2));
             child.accept(this);
         }
     }

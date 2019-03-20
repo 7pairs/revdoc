@@ -24,7 +24,7 @@ public class FootnoteNode extends ParentNode {
     private String id;
 
     /**
-     * {@code FootnoteNode} を構築する。
+     * {@code FootnoteNode} オブジェクトを構築する。
      *
      * @param id 脚注ID
      * @param innerParagraphNode 脚注内容

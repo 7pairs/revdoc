@@ -19,6 +19,7 @@ import blue.lions.revdoc.ast.AppendixNode;
 import blue.lions.revdoc.ast.BackMatterNode;
 import blue.lions.revdoc.ast.BodyMatterNode;
 import blue.lions.revdoc.ast.ChapterNode;
+import blue.lions.revdoc.ast.ColumnNode;
 import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.FrontMatterNode;
@@ -41,6 +42,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,10 +75,20 @@ public class WordVisitor implements Visitor {
     /** {@inheritDoc} */
     @Override
     public void visit(RootNode node) {
-        // 子ノードを辿って処理を実行する
-        for (Node child : node.getChildren()) {
-            child.accept(this);
-        }
+        // 子ノードを取得する
+        List<Node> children = node.getChildren();
+
+        // 前付の処理を実行する
+        children.get(0).accept(this);
+
+        // 本文の処理を実行する
+        children.get(1).accept(this);
+
+        // 付録の処理を実行する
+        children.get(2).accept(this);
+
+        // 後付の処理を実行する
+        children.get(3).accept(this);
     }
 
     /** {@inheritDoc} */
@@ -137,10 +149,24 @@ public class WordVisitor implements Visitor {
     }
 
     /** {@inheritDoc} */
+    public void visit(ColumnNode node) {
+        // 見出しを出力する
+        paragraph = document.createParagraph();
+        run = paragraph.createRun();
+        run.setBold(true);
+        run.setText(node.getTitle());
+
+        // 子ノードを辿って処理を実行する
+        for (Node child : node.getChildren()) {
+            child.accept(this);
+        }
+    }
+
+    /** {@inheritDoc} */
     @Override
     public void visit(HeadingNode node) {
         // 見出しを出力する
-        XWPFParagraph paragraph = document.createParagraph();
+        paragraph = document.createParagraph();
         run = paragraph.createRun();
         run.setBold(true);
         for (Node child : node.getChildren()) {

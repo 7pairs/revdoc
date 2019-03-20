@@ -21,7 +21,7 @@ package blue.lions.revdoc.ast;
 public class OrderedListItemNode extends ParentNode {
 
     /**
-     * {@code OrderedListItemNode} を構築する。
+     * {@code OrderedListItemNode} オブジェクトを構築する。
      *
      * @param innerParagraphNode 要素内容
      */

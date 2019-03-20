@@ -70,6 +70,13 @@ public interface Visitor {
     void visit(ChapterNode node);
 
     /**
+     * {@code ColumnNode} に対する処理を実行する。
+     *
+     * @param node 処理対象のノード
+     */
+    void visit(ColumnNode node);
+
+    /**
      * {@code HeadingNode} に対する処理を実行する。
      *
      * @param node 処理対象のノード

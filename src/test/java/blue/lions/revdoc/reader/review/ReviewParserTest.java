@@ -22,6 +22,8 @@ import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.InnerParagraphNode;
+import blue.lions.revdoc.ast.OrderedListItemNode;
+import blue.lions.revdoc.ast.OrderedListNode;
 import blue.lions.revdoc.ast.ParagraphNode;
 import blue.lions.revdoc.ast.ParentNode;
 import blue.lions.revdoc.ast.TextNode;
@@ -290,6 +292,48 @@ public class ReviewParserTest {
         assertThat(textNode2.getText()).isEqualTo(EXPECTED_SUB_ITEM);
         assertThat(textNode3.getText()).isEqualTo(EXPECTED_ITEM2);
         assertThat(textNode4.getText()).isEqualTo(EXPECTED_ITEM3);
+    }
+
+    @Test
+    @DisplayName("ReviewParser : OrderedList をパースしたとき : OrderedListNode に変換されること")
+    public void ReviewParser_parseOrderedList_convertOrderedListNode() {
+        final Class EXPECTED_CLASS = OrderedListNode.class;
+        final String EXPECTED_ITEM1 = "金子 侑司";
+        final String EXPECTED_ITEM2 = "源田 壮亮";
+        final String EXPECTED_ITEM3 = "秋山 翔吾";
+        final String EXPECTED_ITEM4 = "山川 穂高";
+
+        String review = String.format(
+            " 1. %s\n 2. %s\n 3. %s\n 4. %s\n",
+            EXPECTED_ITEM1,
+            EXPECTED_ITEM2,
+            EXPECTED_ITEM3,
+            EXPECTED_ITEM4
+        );
+        ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
+        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+
+        assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
+
+        OrderedListNode orderedListNode = (OrderedListNode) result.resultValue.getChildren().get(0);
+        assertThat(orderedListNode.getChildren().size()).isEqualTo(4);
+
+        OrderedListItemNode orderedListItemNode1 = (OrderedListItemNode) orderedListNode.getChildren().get(0);
+        InnerParagraphNode innerParagraphNode1 = (InnerParagraphNode) orderedListItemNode1.getChildren().get(0);
+        TextNode textNode1 = (TextNode) innerParagraphNode1.getChildren().get(0);
+        OrderedListItemNode orderedListItemNode2 = (OrderedListItemNode) orderedListNode.getChildren().get(1);
+        InnerParagraphNode innerParagraphNode2 = (InnerParagraphNode) orderedListItemNode2.getChildren().get(0);
+        TextNode textNode2 = (TextNode) innerParagraphNode2.getChildren().get(0);
+        OrderedListItemNode orderedListItemNode3 = (OrderedListItemNode) orderedListNode.getChildren().get(2);
+        InnerParagraphNode innerParagraphNode3 = (InnerParagraphNode) orderedListItemNode3.getChildren().get(0);
+        TextNode textNode3 = (TextNode) innerParagraphNode3.getChildren().get(0);
+        OrderedListItemNode orderedListItemNode4 = (OrderedListItemNode) orderedListNode.getChildren().get(3);
+        InnerParagraphNode innerParagraphNode4 = (InnerParagraphNode) orderedListItemNode4.getChildren().get(0);
+        TextNode textNode4 = (TextNode) innerParagraphNode4.getChildren().get(0);
+        assertThat(textNode1.getText()).isEqualTo(EXPECTED_ITEM1);
+        assertThat(textNode2.getText()).isEqualTo(EXPECTED_ITEM2);
+        assertThat(textNode3.getText()).isEqualTo(EXPECTED_ITEM3);
+        assertThat(textNode4.getText()).isEqualTo(EXPECTED_ITEM4);
     }
 
     @Test

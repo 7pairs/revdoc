@@ -98,6 +98,20 @@ public interface Visitor {
     void visit(UnorderedListItemNode node);
 
     /**
+     * {@code OrderedListNode} に対する処理を実行する。
+     *
+     * @param node 処理対象のノード
+     */
+    void visit(OrderedListNode node);
+
+    /**
+     * {@code OrderedListItemNode} に対する処理を実行する。
+     *
+     * @param node 処理対象のノード
+     */
+    void visit(OrderedListItemNode node);
+
+    /**
      * {@code ParagraphNode} に対する処理を実行する。
      *
      * @param node 処理対象のノード

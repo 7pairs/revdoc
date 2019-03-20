@@ -21,6 +21,8 @@ import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.InnerParagraphNode;
 import blue.lions.revdoc.ast.Node;
+import blue.lions.revdoc.ast.OrderedListItemNode;
+import blue.lions.revdoc.ast.OrderedListNode;
 import blue.lions.revdoc.ast.ParagraphNode;
 import blue.lions.revdoc.ast.ParentNode;
 import blue.lions.revdoc.ast.TextNode;
@@ -51,7 +53,17 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Block <- (Heading5 / Heading4 / Heading3 / Heading2 / Heading1 / Footnote / UnorderedList / Paragraph)
+     * Block <- (
+     *     Heading5 /
+     *     Heading4 /
+     *     Heading3 /
+     *     Heading2 /
+     *     Heading1 /
+     *     Footnote /
+     *     UnorderedList /
+     *     OrderedList /
+     *     Paragraph
+     * )
      *
      * 各要素はRule内で結果Nodeをpushすること。
      */
@@ -64,6 +76,7 @@ class ReviewParser extends BaseParser<Object> {
             Heading1(),
             Footnote(),
             UnorderedList(),
+            OrderedList(),
             Paragraph()
         );
     }
@@ -169,7 +182,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * UnorderedListItemNode <- '*'+ Space? InnerParagraph(&ANY) NewLine?
+     * UnorderedListItem <- ' ' '*'+ Space? InnerParagraph(&ANY) NewLine?
      */
     Rule UnorderedListItem() {
         return Sequence(
@@ -180,6 +193,33 @@ class ReviewParser extends BaseParser<Object> {
             InnerParagraph(Test(ANY)),
             swap(),
             push(new UnorderedListItemNode(((String) pop()).length(), popAs())),
+            Optional(NewLine())
+        );
+    }
+
+    /*
+     * OrderedList <- OrderedListItem+ NewLine?
+     */
+    Rule OrderedList() {
+        return Sequence(
+            push(new OrderedListNode()),
+            OneOrMore(OrderedListItem(), appendChild()),
+            Optional(NewLine())
+        );
+    }
+
+    /*
+     * OrderedListItem <- ' ' ['1'-'9'] ['0'-'9']* '.' Space? InnerParagraph(&ANY) NewLine?
+     */
+    Rule OrderedListItem() {
+        return Sequence(
+            " ",
+            CharRange('1', '9'),
+            ZeroOrMore(CharRange('0', '9')),
+            ".",
+            Optional(Space()),
+            InnerParagraph(Test(ANY)),
+            push(new OrderedListItemNode(popAs())),
             Optional(NewLine())
         );
     }

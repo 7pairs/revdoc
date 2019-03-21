@@ -16,6 +16,7 @@
 package blue.lions.revdoc.reader.review;
 
 import blue.lions.revdoc.ast.ChapterNode;
+import blue.lions.revdoc.ast.ColumnNode;
 import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
@@ -54,6 +55,7 @@ class ReviewParser extends BaseParser<Object> {
 
     /*
      * Block <- (
+     *     Column /
      *     Heading5 /
      *     Heading4 /
      *     Heading3 /
@@ -69,6 +71,7 @@ class ReviewParser extends BaseParser<Object> {
      */
     Rule Block() {
         return FirstOf(
+            Column(),
             Heading5(),
             Heading4(),
             Heading3(),
@@ -82,13 +85,47 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * IsNotBlock <- !'#@#' !' *' !'//footnote'
+     * IsNotBlock <- !'#@#' !'=' !' *' !'//footnote'
      */
     Rule IsNotBlock() {
         return Sequence(
             TestNot("#@#"),
+            TestNot("="),
             TestNot(" *"),
             TestNot("//footnote")
+        );
+    }
+
+    /*
+     * Column <- '='+ '[column]' Space* Text NewLine (BlankLine / Comment)* (BlockInColumn (BlankLine / Comment)*)*
+     *           '='+ '[/column]' NewLine?
+     */
+    Rule Column() {
+        return Sequence(
+            OneOrMore("="),
+            "[column]",
+            ZeroOrMore(Space()),
+            Text(),
+            push(new ColumnNode(popAs())),
+            NewLine(),
+            ZeroOrMore(FirstOf(BlankLine(), Comment())),
+            ZeroOrMore(BlockInColumn(), appendChild(), ZeroOrMore(FirstOf(BlankLine(), Comment()))),
+            ZeroOrMore(NewLine()),
+            OneOrMore("="),
+            "[/column]",
+            Optional(NewLine())
+        );
+    }
+
+    /*
+     * BlockInColumn <- (Footnote / UnorderedList / OrderedList / Paragraph)
+     */
+    Rule BlockInColumn() {
+        return FirstOf(
+            Footnote(),
+            UnorderedList(),
+            OrderedList(),
+            Paragraph()
         );
     }
 

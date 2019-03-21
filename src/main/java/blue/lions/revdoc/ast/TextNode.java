@@ -24,7 +24,7 @@ public class TextNode extends Node {
     private String text;
 
     /**
-     * {@code TextNode} を構築する。
+     * {@code TextNode} オブジェクトを構築する。
      *
      * @param text 文字列
      */

@@ -18,6 +18,7 @@ package blue.lions.revdoc.reader.review;
 import static org.assertj.core.api.Assertions.*;
 
 import blue.lions.revdoc.ast.ChapterNode;
+import blue.lions.revdoc.ast.ColumnNode;
 import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
@@ -47,6 +48,39 @@ public class ReviewParserTest {
         ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
 
         assertThat(result.resultValue).isInstanceOf(EXPECTED);
+    }
+
+    @Test
+    @DisplayName("ReviewParser : Column をパースしたとき : ColumnNode に変換されること")
+    public void ReviewParser_parseColumn_convertColumnNode() {
+        final Class EXPECTED_CLASS = ColumnNode.class;
+        final String EXPECTED_TITLE = "走れメロス";
+        final String EXPECTED_TEXT1 = "メロスは激怒した。必ず、かの邪智暴虐の王を除かなければならぬと決意した。";
+        final String EXPECTED_TEXT2
+            = "メロスには政治がわからぬ。メロスは、村の牧人である。笛を吹き、羊と遊んで暮して来た。" +
+              "けれども邪悪に対しては、人一倍に敏感であった。";
+
+        String review = String.format(
+            "===[column] %s\n\n%s\n\n%s\n\n===[/column]\n",
+            EXPECTED_TITLE,
+            EXPECTED_TEXT1,
+            EXPECTED_TEXT2
+        );
+        ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
+        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+
+        assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
+
+        ColumnNode columnNode = (ColumnNode) result.resultValue.getChildren().get(0);
+        assertThat(columnNode.getTitle()).isEqualTo(EXPECTED_TITLE);
+        assertThat(columnNode.getChildren().size()).isEqualTo(2);
+
+        ParagraphNode paragraphNode1 = (ParagraphNode) columnNode.getChildren().get(0);
+        TextNode textNode1 = (TextNode) paragraphNode1.getChildren().get(0);
+        ParagraphNode paragraphNode2 = (ParagraphNode) columnNode.getChildren().get(1);
+        TextNode textNode2 = (TextNode) paragraphNode2.getChildren().get(0);
+        assertThat(textNode1.getText()).isEqualTo(EXPECTED_TEXT1);
+        assertThat(textNode2.getText()).isEqualTo(EXPECTED_TEXT2);
     }
 
     @Test

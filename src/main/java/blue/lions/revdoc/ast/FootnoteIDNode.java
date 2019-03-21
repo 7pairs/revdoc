@@ -24,7 +24,7 @@ public class FootnoteIDNode extends Node {
     private String id;
 
     /**
-     * {@code FootnoteIDNode} を構築する。
+     * {@code FootnoteIDNode} オブジェクトを構築する。
      *
      * @param id ID
      */

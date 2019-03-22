@@ -24,6 +24,7 @@ import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.FrontMatterNode;
 import blue.lions.revdoc.ast.HeadingNode;
+import blue.lions.revdoc.ast.ImageNode;
 import blue.lions.revdoc.ast.InnerParagraphNode;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.OrderedListItemNode;
@@ -35,12 +36,24 @@ import blue.lions.revdoc.ast.TextNode;
 import blue.lions.revdoc.ast.UnorderedListItemNode;
 import blue.lions.revdoc.ast.UnorderedListNode;
 import blue.lions.revdoc.ast.Visitor;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFootnote;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFPicture;
+import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,8 +63,61 @@ import java.util.Map;
  */
 public class WordVisitor implements Visitor {
 
+    /**
+     * 画像フォーマット情報を格納するクラス。
+     */
+    public static class ImageFormat {
+
+        /* 拡張子 */
+        private String extension;
+
+        /* 画像タイプ */
+        private int pictureType;
+
+        /**
+         * {@code ImageFormat} オブジェクトを構築する。
+         *
+         * @param extension 拡張子
+         * @param pictureType 画像タイプ
+         */
+        public ImageFormat(String extension, int pictureType) {
+            // フィールドを初期化する
+            this.extension = extension;
+            this.pictureType = pictureType;
+        }
+
+        /**
+         * 拡張子を取得する。
+         *
+         * @return 拡張子
+         */
+        public String getExtension() {
+            // 拡張子を返す
+            return extension;
+        }
+
+        /**
+         * 画像タイプを取得する。
+         *
+         * @return 画像タイプ
+         */
+        public int getPictureType() {
+            // 画像タイプを返す
+            return pictureType;
+        }
+    }
+
+    /* 対応画像フォーマット */
+    private static final List<ImageFormat> IMAGE_FORMATS;
+
+    /* 入力ディレクトリパス */
+    private String inputDirectoryPath;
+
     /* 処理中のWordドキュメント */
     private XWPFDocument document;
+
+    /* 処理中の章ID */
+    private String chapterID;
 
     /* 処理中の段落 */
     private XWPFParagraph paragraph;
@@ -62,14 +128,24 @@ public class WordVisitor implements Visitor {
     /* 解析済みの脚注 */
     private Map<String, XWPFFootnote> footnotes;
 
+    // 初期化処理
+    static {
+        IMAGE_FORMATS = new ArrayList<>();
+        IMAGE_FORMATS.add(new ImageFormat("png", XWPFDocument.PICTURE_TYPE_PNG));
+        IMAGE_FORMATS.add(new ImageFormat("jpg", XWPFDocument.PICTURE_TYPE_JPEG));
+        IMAGE_FORMATS.add(new ImageFormat("jpeg", XWPFDocument.PICTURE_TYPE_JPEG));
+    }
+
     /**
      * {@code WordVisitor} オブジェクトを構築する。
      *
      * @param document Wordドキュメント
+     * @param inputDirectoryPath 入力ディレクトリパス
      */
-    public WordVisitor(XWPFDocument document) {
+    public WordVisitor(XWPFDocument document, String inputDirectoryPath) {
         // フィールドを初期化する
         this.document = document;
+        this.inputDirectoryPath = inputDirectoryPath;
     }
 
     /** {@inheritDoc} */
@@ -139,6 +215,9 @@ public class WordVisitor implements Visitor {
     /** {@inheritDoc} */
     @Override
     public void visit(ChapterNode node) {
+        // IDを更新する
+        chapterID = node.getId();
+
         // 脚注を初期化する
         footnotes = new HashMap<>();
 
@@ -171,6 +250,41 @@ public class WordVisitor implements Visitor {
         run.setBold(true);
         for (Node child : node.getChildren()) {
             child.accept(this);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(ImageNode node) {
+        // 画像を挿入する
+        for (ImageFormat imageFormat : IMAGE_FORMATS) {
+            String imageFileName = node.getId() + "." + imageFormat.getExtension();
+            Path imageFilePath = Paths.get(inputDirectoryPath, "images", chapterID, imageFileName);
+            if (Files.exists(imageFilePath)) {
+                double ratio;
+                try (InputStream inputStream = Files.newInputStream(imageFilePath)) {
+                    BufferedImage bufferedImage = ImageIO.read(inputStream);
+                    ratio = (double) bufferedImage.getHeight() / bufferedImage.getWidth();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+
+                paragraph = document.createParagraph();
+                run = paragraph.createRun();
+                try (InputStream inputStream = Files.newInputStream(imageFilePath)) {
+                    run.addPicture(
+                        inputStream,
+                        imageFormat.getPictureType(),
+                        node.getCaption(),
+                        Units.toEMU(400),
+                        Units.toEMU(400 * ratio)
+                    );
+                    return;
+                } catch (InvalidFormatException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

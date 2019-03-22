@@ -20,6 +20,7 @@ import blue.lions.revdoc.ast.ColumnNode;
 import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
+import blue.lions.revdoc.ast.ImageNode;
 import blue.lions.revdoc.ast.InnerParagraphNode;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.OrderedListItemNode;
@@ -33,6 +34,8 @@ import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 
+import java.math.BigDecimal;
+
 /*
  * Re:VIEWフォーマットのパーサー。
  */
@@ -45,9 +48,9 @@ class ReviewParser extends BaseParser<Object> {
      * Block要素はRule内で結果Nodeをpushしている。
      * その結果NodeをChapterNodeの子に追加する。
      */
-    Rule Chapter() {
+    Rule Chapter(String id) {
         return Sequence(
-            push(new ChapterNode()),
+            push(new ChapterNode(id)),
             ZeroOrMore(FirstOf(BlankLine(), Comment())),
             ZeroOrMore(Block(), appendChild(), ZeroOrMore(FirstOf(BlankLine(), Comment())))
         );
@@ -61,6 +64,7 @@ class ReviewParser extends BaseParser<Object> {
      *     Heading3 /
      *     Heading2 /
      *     Heading1 /
+     *     Image /
      *     Footnote /
      *     UnorderedList /
      *     OrderedList /
@@ -77,6 +81,7 @@ class ReviewParser extends BaseParser<Object> {
             Heading3(),
             Heading2(),
             Heading1(),
+            Image(),
             Footnote(),
             UnorderedList(),
             OrderedList(),
@@ -85,14 +90,15 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * IsNotBlock <- !'#@#' !'=' !' *' !'//footnote'
+     * IsNotBlock <- !'#@#' !'=' !' *' !'//footnote' !'//image'
      */
     Rule IsNotBlock() {
         return Sequence(
             TestNot("#@#"),
             TestNot("="),
             TestNot(" *"),
-            TestNot("//footnote")
+            TestNot("//footnote"),
+            TestNot("//image")
         );
     }
 
@@ -118,10 +124,11 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * BlockInColumn <- (Footnote / UnorderedList / OrderedList / Paragraph)
+     * BlockInColumn <- (Image / Footnote / UnorderedList / OrderedList / Paragraph)
      */
     Rule BlockInColumn() {
         return FirstOf(
+            Image(),
             Footnote(),
             UnorderedList(),
             OrderedList(),
@@ -188,6 +195,29 @@ class ReviewParser extends BaseParser<Object> {
             Text(),
             push(new HeadingNode(level, new TextNode(popAs()), popAs())),
             Optional(NewLine())
+        );
+    }
+
+    /*
+     * Image <- '//image[' LimitedText(']') '][' LimitedText(']') ']' ('[scale=' LimitedText(']') ']')? '{'
+     *          (!'//}' ANY)* '//}'
+     */
+    Rule Image() {
+        return Sequence(
+            "//image[",
+            LimitedText(TestNot("]")),
+            "][",
+            LimitedText(TestNot("]")),
+            "]",
+            Optional(FirstOf(
+                Sequence("[scale=", LimitedText(TestNot("]")), "]"),
+                push("")
+            )),
+            swap3(),
+            push(new ImageNode(popAs(), popAs(), popAs())),
+            "{",
+            ZeroOrMore(TestNot("//}"), ANY),
+            "//}"
         );
     }
 

@@ -20,6 +20,29 @@ package blue.lions.revdoc.ast;
  */
 public class ChapterNode extends ParentNode {
 
+    /* ID */
+    private String id;
+
+    /**
+     * {@code ChapterNode} オブジェクトを構築する。
+     *
+     * @param id ID
+     */
+    public ChapterNode(String id) {
+        // フィールドを初期化する
+        this.id = id;
+    }
+
+    /**
+     * IDを取得する。
+     *
+     * @return ID
+     */
+    public String getId() {
+        // ファイル名を返す
+        return id;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {

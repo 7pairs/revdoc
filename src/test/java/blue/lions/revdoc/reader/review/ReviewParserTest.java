@@ -22,6 +22,7 @@ import blue.lions.revdoc.ast.ColumnNode;
 import blue.lions.revdoc.ast.FootnoteIDNode;
 import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
+import blue.lions.revdoc.ast.ImageNode;
 import blue.lions.revdoc.ast.InnerParagraphNode;
 import blue.lions.revdoc.ast.OrderedListItemNode;
 import blue.lions.revdoc.ast.OrderedListNode;
@@ -36,6 +37,8 @@ import org.parboiled.Parboiled;
 import org.parboiled.parserunners.ReportingParseRunner;
 import org.parboiled.support.ParsingResult;
 
+import java.math.BigDecimal;
+
 public class ReviewParserTest {
 
     @Test
@@ -45,7 +48,8 @@ public class ReviewParserTest {
 
         String review = "ドーモ、世界=サン。ニンジャスレイヤーです。";
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         assertThat(result.resultValue).isInstanceOf(EXPECTED);
     }
@@ -67,7 +71,8 @@ public class ReviewParserTest {
             EXPECTED_TEXT2
         );
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
 
@@ -94,7 +99,8 @@ public class ReviewParserTest {
 
         String review = String.format("= %s\n\n=[%s] %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
 
@@ -126,7 +132,8 @@ public class ReviewParserTest {
 
         String review = String.format("== %s\n\n==[%s] %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
 
@@ -158,7 +165,8 @@ public class ReviewParserTest {
 
         String review = String.format("=== %s\n\n===[%s] %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
 
@@ -190,7 +198,8 @@ public class ReviewParserTest {
 
         String review = String.format("==== %s\n\n====[%s] %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
 
@@ -222,7 +231,8 @@ public class ReviewParserTest {
 
         String review = String.format("===== %s\n\n=====[%s] %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
 
@@ -244,6 +254,32 @@ public class ReviewParserTest {
     }
 
     @Test
+    @DisplayName("ReviewParser : Image をパースしたとき : ImageNode に変換されること")
+    public void ReviewParser_parseImage_convertImageNode() {
+        final Class EXPECTED_CLASS = ImageNode.class;
+        final String EXPECTED_ID = "image_id";
+        final String EXPECTED_CAPTION = "画像の説明";
+        final BigDecimal EXPECTED_SCALE = new BigDecimal("0.5");
+
+        String review = String.format(
+            "//image[%s][%s][scale=%s]{\n//}",
+            EXPECTED_ID,
+            EXPECTED_CAPTION,
+            EXPECTED_SCALE.toString()
+        );
+        ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
+
+        assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
+
+        ImageNode imageNode = (ImageNode) result.resultValue.getChildren().get(0);
+        assertThat(imageNode.getId()).isEqualTo(EXPECTED_ID);
+        assertThat(imageNode.getCaption()).isEqualTo(EXPECTED_CAPTION);
+        assertThat(imageNode.getScale()).isEqualTo(EXPECTED_SCALE);
+    }
+
+    @Test
     @DisplayName("ReviewParser : Footnote をパースしたとき : FootnoteNode に変換されること")
     public void ReviewParser_parseFootnote_convertFootnoteNode() {
         final Class EXPECTED_CLASS = FootnoteNode.class;
@@ -260,7 +296,8 @@ public class ReviewParserTest {
             EXPECTED_TEXT2
         );
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
 
@@ -298,7 +335,8 @@ public class ReviewParserTest {
             EXPECTED_ITEM3
         );
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
 
@@ -345,7 +383,8 @@ public class ReviewParserTest {
             EXPECTED_ITEM4
         );
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
 
@@ -380,7 +419,8 @@ public class ReviewParserTest {
 
         String review = String.format("%s\n%s\n\n%s\n", EXPECTED_TEXT1, EXPECTED_TEXT2, EXPECTED_TEXT3);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
 
@@ -406,7 +446,8 @@ public class ReviewParserTest {
 
         String review = String.format("パグリアルーロ@<fn>{%s}とシアンフロッコ@<fn>{%s}", EXPECTED_ID1, EXPECTED_ID2);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         ParagraphNode paragraphNode = (ParagraphNode) result.resultValue.getChildren().get(0);
         assertThat(paragraphNode.getChildren().get(1)).isInstanceOf(EXPECTED_CLASS);
@@ -426,7 +467,8 @@ public class ReviewParserTest {
 
         String review = String.format("#@# コメント\n%s\n#@#\n", EXPECTED_TEXT);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ParentNode> result = new ReportingParseRunner<ParentNode>(reviewParser.Chapter()).run(review);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
 
         assertThat(result.resultValue.getChildren().size()).isEqualTo(1);
         assertThat(result.resultValue.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);

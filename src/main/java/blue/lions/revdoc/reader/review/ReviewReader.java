@@ -19,6 +19,7 @@ import blue.lions.revdoc.Arguments;
 import blue.lions.revdoc.ast.AppendixNode;
 import blue.lions.revdoc.ast.BackMatterNode;
 import blue.lions.revdoc.ast.BodyMatterNode;
+import blue.lions.revdoc.ast.ChapterNode;
 import blue.lions.revdoc.ast.FrontMatterNode;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.PartNode;
@@ -119,11 +120,13 @@ public class ReviewReader extends Reader {
      * @param fileName ファイル名
      * @return パース結果
      */
-    private Node parseChapter(String fileName) {
+    private ChapterNode parseChapter(String fileName) {
         // Re:VIEWフォーマットのファイルをパースする
         String review = readFile(Paths.get(inputDirectoryPath, fileName));
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<Node> result = new ReportingParseRunner<Node>(reviewParser.Chapter()).run(review);
+        ParsingResult<ChapterNode> result = new ReportingParseRunner<ChapterNode>(reviewParser.Chapter(
+            fileName.substring(0, fileName.lastIndexOf("."))
+        )).run(review);
 
         // パース結果を返す
         return result.resultValue;

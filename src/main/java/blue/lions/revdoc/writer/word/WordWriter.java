@@ -31,6 +31,9 @@ import java.nio.file.Paths;
  */
 public class WordWriter extends Writer {
 
+    /* 入力ディレクトリパス */
+    private String inputDirectoryPath;
+
     /* テンプレートファイルパス */
     private String templateFilePath;
 
@@ -44,6 +47,7 @@ public class WordWriter extends Writer {
      */
     public WordWriter(Arguments arguments) {
         // フィールドを初期化する
+        this.inputDirectoryPath = arguments.getInputDirectoryPath();
         this.templateFilePath = arguments.getTemplateFilePath();
         this.outputFilePath = arguments.getOutputFilePath();
     }
@@ -59,7 +63,7 @@ public class WordWriter extends Writer {
             XWPFDocument document = new XWPFDocument(inputStream);
             OutputStream outputStream = Files.newOutputStream(Paths.get(outputFilePath))
         ) {
-            WordVisitor wordVisitor = new WordVisitor(document);
+            WordVisitor wordVisitor = new WordVisitor(document, inputDirectoryPath);
             ast.accept(wordVisitor);
             document.write(outputStream);
         } catch (IOException e) {

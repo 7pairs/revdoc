@@ -22,6 +22,7 @@ import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.ImageNode;
 import blue.lions.revdoc.ast.InnerParagraphNode;
+import blue.lions.revdoc.ast.LinkNode;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.OrderedListItemNode;
 import blue.lions.revdoc.ast.OrderedListNode;
@@ -319,10 +320,13 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Inline <- FootnoteID
+     * Inline <- FootnoteID / Link
      */
     Rule Inline() {
-        return FootnoteID();
+        return FirstOf(
+            FootnoteID(),
+            Link()
+        );
     }
 
     /*
@@ -333,6 +337,23 @@ class ReviewParser extends BaseParser<Object> {
             "@<fn>{",
             LimitedText(TestNot("}")),
             push(new FootnoteIDNode(popAs())),
+            "}"
+        );
+    }
+
+    /*
+     * Link <- '@<href>{' LimitedText(!',' !'}') (',' Space* LimitedText(!'}'))? '}'
+     */
+    Rule Link() {
+        return Sequence(
+            "@<href>{",
+            LimitedText(Sequence(TestNot(","), TestNot("}"))),
+            FirstOf(
+                Sequence(",", ZeroOrMore(Space()), LimitedText(TestNot("}"))),
+                push("")
+            ),
+            swap(),
+            push(new LinkNode(popAs(), popAs())),
             "}"
         );
     }

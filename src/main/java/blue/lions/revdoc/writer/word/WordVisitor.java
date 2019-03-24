@@ -26,6 +26,7 @@ import blue.lions.revdoc.ast.FrontMatterNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.ImageNode;
 import blue.lions.revdoc.ast.InnerParagraphNode;
+import blue.lions.revdoc.ast.LinkNode;
 import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.ast.OrderedListItemNode;
 import blue.lions.revdoc.ast.OrderedListNode;
@@ -37,13 +38,16 @@ import blue.lions.revdoc.ast.UnorderedListItemNode;
 import blue.lions.revdoc.ast.UnorderedListNode;
 import blue.lions.revdoc.ast.Visitor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFootnote;
+import org.apache.poi.xwpf.usermodel.XWPFFootnotes;
+import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFPicture;
-import org.apache.poi.xwpf.usermodel.XWPFPictureData;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHyperlink;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -126,7 +130,13 @@ public class WordVisitor implements Visitor {
     private XWPFRun run;
 
     /* 解析済みの脚注 */
-    private Map<String, XWPFFootnote> footnotes;
+    private XWPFFootnotes footnotes;
+
+    /* 脚注ID→インデックスマッピング用 */
+    private Map<String, Integer> footnoteIndices;
+
+    /* 脚注解析中フラグ */
+    private boolean isFootnote = false;
 
     // 初期化処理
     static {
@@ -151,6 +161,9 @@ public class WordVisitor implements Visitor {
     /** {@inheritDoc} */
     @Override
     public void visit(RootNode node) {
+        // ドキュメントの初期処理
+        footnotes = document.createFootnotes();
+
         // 子ノードを取得する
         List<Node> children = node.getChildren();
 
@@ -219,7 +232,7 @@ public class WordVisitor implements Visitor {
         chapterID = node.getId();
 
         // 脚注を初期化する
-        footnotes = new HashMap<>();
+        footnoteIndices = new HashMap<>();
 
         // 子ノードを辿って処理を実行する
         for (Node child : node.getChildren()) {
@@ -291,13 +304,19 @@ public class WordVisitor implements Visitor {
     /** {@inheritDoc} */
     @Override
     public void visit(FootnoteNode node) {
+        // 脚注の処理を開始
+        isFootnote = true;
+
         // 脚注を作成する
-        XWPFFootnote footnote = document.createFootnote();
+        XWPFFootnote footnote = footnotes.createFootnote();
         paragraph = footnote.createParagraph();
         for (Node child : node.getChildren()) {
             child.accept(this);
         }
-        footnotes.put(node.getId(), footnote);
+        footnoteIndices.put(node.getId(), footnotes.getFootnotesList().size() - 1);
+
+        // 脚注の処理を終了
+        isFootnote = false;
     }
 
     /** {@inheritDoc} */
@@ -366,7 +385,24 @@ public class WordVisitor implements Visitor {
     @Override
     public void visit(FootnoteIDNode node) {
         // 脚注を関連付ける
-        paragraph.addFootnoteReference(footnotes.get(node.getId()));
+        paragraph.addFootnoteReference(footnotes.getFootnotesList().get(footnoteIndices.get(node.getId())));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void visit(LinkNode node) {
+        // リンクを出力する
+        try {
+            PackagePart part = isFootnote ? footnotes.getPackagePart() : document.getPackagePart();
+            String id = part.addExternalRelationship(node.getUrl(), XWPFRelation.HYPERLINK.getRelation()).getId();
+            CTHyperlink hyperlink = paragraph.getCTP().addNewHyperlink();
+            hyperlink.setId(id);
+            hyperlink.addNewR();
+            XWPFHyperlinkRun run = new XWPFHyperlinkRun(hyperlink, hyperlink.getRArray(0), paragraph);
+            run.setText(node.getLabel());
+        } catch (Exception e) {
+            run.setText(node.getLabel());
+        }
     }
 
     /** {@inheritDoc} */

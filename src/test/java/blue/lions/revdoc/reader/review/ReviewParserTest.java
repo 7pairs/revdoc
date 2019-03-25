@@ -24,6 +24,7 @@ import blue.lions.revdoc.ast.FootnoteNode;
 import blue.lions.revdoc.ast.HeadingNode;
 import blue.lions.revdoc.ast.ImageNode;
 import blue.lions.revdoc.ast.InnerParagraphNode;
+import blue.lions.revdoc.ast.LinkNode;
 import blue.lions.revdoc.ast.OrderedListItemNode;
 import blue.lions.revdoc.ast.OrderedListNode;
 import blue.lions.revdoc.ast.ParagraphNode;
@@ -457,6 +458,37 @@ public class ReviewParserTest {
         FootnoteIDNode footnoteIDNode2 = (FootnoteIDNode) paragraphNode.getChildren().get(3);
         assertThat(footnoteIDNode1.getId()).isEqualTo(EXPECTED_ID1);
         assertThat(footnoteIDNode2.getId()).isEqualTo(EXPECTED_ID2);
+    }
+
+    @Test
+    @DisplayName("ReviewParser : Link をパースしたとき : LinkNode に変換されること")
+    public void ReviewParser_parseLink_convertLinkNode() {
+        final Class EXPECTED_CLASS = LinkNode.class;
+        final String EXPECTED_URL1 = "https://github.com/7pairs/revdoc";
+        final String EXPECTED_URL2 = "http://lions.blue/";
+        final String EXPECTED_LABEL = "ねことくまとへび";
+
+        String review = String.format(
+            "@<href>{%s}\n\n@<href>{%s, %s}",
+            EXPECTED_URL1,
+            EXPECTED_URL2,
+            EXPECTED_LABEL
+        );
+        ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
+        ParsingResult<ParentNode> result
+            = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
+
+        ParagraphNode paragraphNode1 = (ParagraphNode) result.resultValue.getChildren().get(0);
+        ParagraphNode paragraphNode2 = (ParagraphNode) result.resultValue.getChildren().get(1);
+        assertThat(paragraphNode1.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
+        assertThat(paragraphNode2.getChildren().get(0)).isInstanceOf(EXPECTED_CLASS);
+
+        LinkNode linkNode1 = (LinkNode) paragraphNode1.getChildren().get(0);
+        LinkNode linkNode2 = (LinkNode) paragraphNode2.getChildren().get(0);
+        assertThat(linkNode1.getUrl()).isEqualTo(EXPECTED_URL1);
+        assertThat(linkNode1.getLabel()).isEqualTo(EXPECTED_URL1);
+        assertThat(linkNode2.getUrl()).isEqualTo(EXPECTED_URL2);
+        assertThat(linkNode2.getLabel()).isEqualTo(EXPECTED_LABEL);
     }
 
     @Test

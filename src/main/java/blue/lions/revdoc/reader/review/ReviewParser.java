@@ -35,8 +35,6 @@ import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 
-import java.math.BigDecimal;
-
 /*
  * Re:VIEWフォーマットのパーサー。
  */

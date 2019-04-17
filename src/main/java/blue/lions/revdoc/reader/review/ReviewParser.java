@@ -35,8 +35,6 @@ import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 
-import java.math.BigDecimal;
-
 /*
  * Re:VIEWフォーマットのパーサー。
  */
@@ -191,7 +189,7 @@ class ReviewParser extends BaseParser<Object> {
     Rule Heading(int level) {
         return Sequence(
             "=====".substring(5 - level),
-            Optional(FirstOf(Sequence("[", LimitedText(TestNot("]")), "]"), push(""))),
+            Optional(FirstOf(Sequence("{", LimitedText(TestNot("}")), "}"), push(""))),
             ZeroOrMore(Space()),
             Text(),
             push(new HeadingNode(level, new TextNode(popAs()), popAs())),

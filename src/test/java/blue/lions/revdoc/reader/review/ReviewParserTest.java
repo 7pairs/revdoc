@@ -98,7 +98,7 @@ public class ReviewParserTest {
         final String EXPECTED_TEXT2 = "見出し2";
         final String EXPECTED_ID = "heading_id";
 
-        String review = String.format("= %s\n\n=[%s] %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
+        String review = String.format("= %s\n\n={%s} %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result
             = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
@@ -131,7 +131,7 @@ public class ReviewParserTest {
         final String EXPECTED_TEXT2 = "見出し2";
         final String EXPECTED_ID = "heading_id";
 
-        String review = String.format("== %s\n\n==[%s] %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
+        String review = String.format("== %s\n\n=={%s} %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result
             = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
@@ -164,7 +164,7 @@ public class ReviewParserTest {
         final String EXPECTED_TEXT2 = "見出し2";
         final String EXPECTED_ID = "heading_id";
 
-        String review = String.format("=== %s\n\n===[%s] %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
+        String review = String.format("=== %s\n\n==={%s} %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result
             = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
@@ -197,7 +197,7 @@ public class ReviewParserTest {
         final String EXPECTED_TEXT2 = "見出し2";
         final String EXPECTED_ID = "heading_id";
 
-        String review = String.format("==== %s\n\n====[%s] %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
+        String review = String.format("==== %s\n\n===={%s} %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result
             = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);
@@ -230,7 +230,7 @@ public class ReviewParserTest {
         final String EXPECTED_TEXT2 = "見出し2";
         final String EXPECTED_ID = "heading_id";
 
-        String review = String.format("===== %s\n\n=====[%s] %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
+        String review = String.format("===== %s\n\n====={%s} %s\n", EXPECTED_TEXT1, EXPECTED_ID, EXPECTED_TEXT2);
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
         ParsingResult<ParentNode> result
             = new ReportingParseRunner<ParentNode>(reviewParser.Chapter("")).run(review);

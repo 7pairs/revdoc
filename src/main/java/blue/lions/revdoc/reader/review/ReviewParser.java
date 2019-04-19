@@ -102,14 +102,14 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Column <- '='+ '[column]' Space* Text NewLine (BlankLine / Comment)* (BlockInColumn (BlankLine / Comment)*)*
+     * Column <- '='+ '[column]' Space_old* Text NewLine (BlankLine / Comment)* (BlockInColumn (BlankLine / Comment)*)*
      *           '='+ '[/column]' NewLine?
      */
     Rule Column() {
         return Sequence(
             OneOrMore("="),
             "[column]",
-            ZeroOrMore(Space()),
+            ZeroOrMore(Space_old()),
             Text(),
             push(new ColumnNode(popAs())),
             NewLine(),
@@ -136,7 +136,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading5 <- '=====' ('[' LimitedText(']') ']')? Space* Text NewLine?
+     * Heading5 <- '=====' ('[' LimitedText(']') ']')? Space_old* Text NewLine?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -145,7 +145,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading4 <- '====' ('[' LimitedText(']') ']')? Space* Text NewLine?
+     * Heading4 <- '====' ('[' LimitedText(']') ']')? Space_old* Text NewLine?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -154,7 +154,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading3 <- '===' ('[' LimitedText(']') ']')? Space* Text NewLine?
+     * Heading3 <- '===' ('[' LimitedText(']') ']')? Space_old* Text NewLine?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -163,7 +163,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading2 <- '==' ('[' LimitedText(']') ']')? Space* Text NewLine?
+     * Heading2 <- '==' ('[' LimitedText(']') ']')? Space_old* Text NewLine?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -172,7 +172,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading1 <- '=' ('[' LimitedText(']') ']')? Space* Text NewLine?
+     * Heading1 <- '=' ('[' LimitedText(']') ']')? Space_old* Text NewLine?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -190,7 +190,7 @@ class ReviewParser extends BaseParser<Object> {
         return Sequence(
             "=====".substring(5 - level),
             Optional(FirstOf(Sequence("{", LimitedText(TestNot("}")), "}"), push(""))),
-            ZeroOrMore(Space()),
+            ZeroOrMore(Space_old()),
             Text(),
             push(new HeadingNode(level, new TextNode(popAs()), popAs())),
             Optional(NewLine())
@@ -248,14 +248,14 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * UnorderedListItem <- ' ' '*'+ Space? InnerParagraph(&ANY) NewLine?
+     * UnorderedListItem <- ' ' '*'+ Space_old? InnerParagraph(&ANY) NewLine?
      */
     Rule UnorderedListItem() {
         return Sequence(
             " ",
             OneOrMore("*"),
             push(match()),
-            Optional(Space()),
+            Optional(Space_old()),
             InnerParagraph(Test(ANY)),
             swap(),
             push(new UnorderedListItemNode(((String) pop()).length(), popAs())),
@@ -275,7 +275,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * OrderedListItem <- ' ' ['1'-'9'] ['0'-'9']* '.' Space? InnerParagraph(&ANY) NewLine?
+     * OrderedListItem <- ' ' ['1'-'9'] ['0'-'9']* '.' Space_old? InnerParagraph(&ANY) NewLine?
      */
     Rule OrderedListItem() {
         return Sequence(
@@ -283,7 +283,7 @@ class ReviewParser extends BaseParser<Object> {
             CharRange('1', '9'),
             ZeroOrMore(CharRange('0', '9')),
             ".",
-            Optional(Space()),
+            Optional(Space_old()),
             InnerParagraph(Test(ANY)),
             push(new OrderedListItemNode(popAs())),
             Optional(NewLine())
@@ -340,14 +340,14 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Link <- '@<href>{' LimitedText(!',' !'}') (',' Space* LimitedText(!'}'))? '}'
+     * Link <- '@<href>{' LimitedText(!',' !'}') (',' Space_old* LimitedText(!'}'))? '}'
      */
     Rule Link() {
         return Sequence(
             "@<href>{",
             LimitedText(Sequence(TestNot(","), TestNot("}"))),
             FirstOf(
-                Sequence(",", ZeroOrMore(Space()), LimitedText(TestNot("}"))),
+                Sequence(",", ZeroOrMore(Space_old()), LimitedText(TestNot("}"))),
                 push("")
             ),
             swap(),
@@ -402,9 +402,9 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Space <- (' ' / '\t')+
+     * Space_old <- (' ' / '\t')+
      */
-    Rule Space() {
+    Rule Space_old() {
         return OneOrMore(
             FirstOf(" ", "\t")
         );
@@ -421,11 +421,11 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * BlankLine <- Space* NewLine
+     * BlankLine <- Space_old* NewLine
      */
     Rule BlankLine() {
         return Sequence(
-            ZeroOrMore(Space()),
+            ZeroOrMore(Space_old()),
             NewLine()
         );
     }
@@ -447,6 +447,15 @@ class ReviewParser extends BaseParser<Object> {
             parent.appendChild(child);
         }
         return true;
+    }
+
+    /*
+     * Space <- [ 　\t]
+     */
+    Rule Space() {
+        return AnyOf(
+            new char[] {' ', '　', '\t'}
+        );
     }
 
     /*

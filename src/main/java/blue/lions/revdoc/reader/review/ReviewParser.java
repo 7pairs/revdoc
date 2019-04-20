@@ -102,8 +102,8 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Column <- '='+ '[column]' Space_old* Text NewLine (BlankLine / Comment)* (BlockInColumn (BlankLine / Comment)*)*
-     *           '='+ '[/column]' NewLine?
+     * Column <- '='+ '[column]' Space_old* Text NewLine_old (BlankLine / Comment)* (BlockInColumn (BlankLine / Comment)*)*
+     *           '='+ '[/column]' NewLine_old?
      */
     Rule Column() {
         return Sequence(
@@ -112,13 +112,13 @@ class ReviewParser extends BaseParser<Object> {
             ZeroOrMore(Space_old()),
             Text(),
             push(new ColumnNode(popAs())),
-            NewLine(),
+            NewLine_old(),
             ZeroOrMore(FirstOf(BlankLine(), Comment())),
             ZeroOrMore(BlockInColumn(), appendChild(), ZeroOrMore(FirstOf(BlankLine(), Comment()))),
-            ZeroOrMore(NewLine()),
+            ZeroOrMore(NewLine_old()),
             OneOrMore("="),
             "[/column]",
-            Optional(NewLine())
+            Optional(NewLine_old())
         );
     }
 
@@ -136,7 +136,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading5 <- '=====' ('[' LimitedText(']') ']')? Space_old* Text NewLine?
+     * Heading5 <- '=====' ('[' LimitedText(']') ']')? Space_old* Text NewLine_old?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -145,7 +145,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading4 <- '====' ('[' LimitedText(']') ']')? Space_old* Text NewLine?
+     * Heading4 <- '====' ('[' LimitedText(']') ']')? Space_old* Text NewLine_old?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -154,7 +154,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading3 <- '===' ('[' LimitedText(']') ']')? Space_old* Text NewLine?
+     * Heading3 <- '===' ('[' LimitedText(']') ']')? Space_old* Text NewLine_old?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -163,7 +163,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading2 <- '==' ('[' LimitedText(']') ']')? Space_old* Text NewLine?
+     * Heading2 <- '==' ('[' LimitedText(']') ']')? Space_old* Text NewLine_old?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -172,7 +172,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Heading1 <- '=' ('[' LimitedText(']') ']')? Space_old* Text NewLine?
+     * Heading1 <- '=' ('[' LimitedText(']') ']')? Space_old* Text NewLine_old?
      *
      * 共通RuleのHeadingに任せる。
      */
@@ -193,7 +193,7 @@ class ReviewParser extends BaseParser<Object> {
             ZeroOrMore(Space_old()),
             Text(),
             push(new HeadingNode(level, new TextNode(popAs()), popAs())),
-            Optional(NewLine())
+            Optional(NewLine_old())
         );
     }
 
@@ -221,7 +221,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Footnote <- '//footnote[' LimitedText(!']') '][' InnerParagraph(!']') ']' NewLine?
+     * Footnote <- '//footnote[' LimitedText(!']') '][' InnerParagraph(!']') ']' NewLine_old?
      */
     Rule Footnote() {
         return Sequence(
@@ -232,23 +232,23 @@ class ReviewParser extends BaseParser<Object> {
             swap(),
             push(new FootnoteNode(popAs(), popAs())),
             "]",
-            Optional(NewLine())
+            Optional(NewLine_old())
         );
     }
 
     /*
-     * UnorderedList <- UnorderedListItemNode+ NewLine?
+     * UnorderedList <- UnorderedListItemNode+ NewLine_old?
      */
     Rule UnorderedList() {
         return Sequence(
             push(new UnorderedListNode()),
             OneOrMore(UnorderedListItem(), appendChild()),
-            Optional(NewLine())
+            Optional(NewLine_old())
         );
     }
 
     /*
-     * UnorderedListItem <- ' ' '*'+ Space_old? InnerParagraph(&ANY) NewLine?
+     * UnorderedListItem <- ' ' '*'+ Space_old? InnerParagraph(&ANY) NewLine_old?
      */
     Rule UnorderedListItem() {
         return Sequence(
@@ -259,23 +259,23 @@ class ReviewParser extends BaseParser<Object> {
             InnerParagraph(Test(ANY)),
             swap(),
             push(new UnorderedListItemNode(((String) pop()).length(), popAs())),
-            Optional(NewLine())
+            Optional(NewLine_old())
         );
     }
 
     /*
-     * OrderedList <- OrderedListItem+ NewLine?
+     * OrderedList <- OrderedListItem+ NewLine_old?
      */
     Rule OrderedList() {
         return Sequence(
             push(new OrderedListNode()),
             OneOrMore(OrderedListItem(), appendChild()),
-            Optional(NewLine())
+            Optional(NewLine_old())
         );
     }
 
     /*
-     * OrderedListItem <- ' ' ['1'-'9'] ['0'-'9']* '.' Space_old? InnerParagraph(&ANY) NewLine?
+     * OrderedListItem <- ' ' ['1'-'9'] ['0'-'9']* '.' Space_old? InnerParagraph(&ANY) NewLine_old?
      */
     Rule OrderedListItem() {
         return Sequence(
@@ -286,12 +286,12 @@ class ReviewParser extends BaseParser<Object> {
             Optional(Space_old()),
             InnerParagraph(Test(ANY)),
             push(new OrderedListItemNode(popAs())),
-            Optional(NewLine())
+            Optional(NewLine_old())
         );
     }
 
     /*
-     * Paragraph <- ((Inline / Text) NewLine?)+
+     * Paragraph <- ((Inline / Text) NewLine_old?)+
      */
     Rule Paragraph() {
         return Sequence(
@@ -299,12 +299,12 @@ class ReviewParser extends BaseParser<Object> {
             OneOrMore(FirstOf(
                 Sequence(Inline(), appendChild()),
                 Sequence(Text(), push(new TextNode(popAs())), appendChild())
-            ), Optional(NewLine()))
+            ), Optional(NewLine_old()))
         );
     }
 
     /*
-     * InnerParagraph <- (Inline / Text)+ NewLine?
+     * InnerParagraph <- (Inline / Text)+ NewLine_old?
      */
     Rule InnerParagraph(Rule rule) {
         return Sequence(
@@ -313,7 +313,7 @@ class ReviewParser extends BaseParser<Object> {
                 Sequence(Inline(), appendChild()),
                 Sequence(LimitedText(rule), push(new TextNode(popAs())), appendChild())
             )),
-            Optional(NewLine())
+            Optional(NewLine_old())
         );
     }
 
@@ -357,7 +357,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Comment <- '#@#' Text? NewLine?
+     * Comment <- '#@#' Text? NewLine_old?
      *
      * Textがpushした文字列は破棄する。
      */
@@ -365,7 +365,7 @@ class ReviewParser extends BaseParser<Object> {
         return Sequence(
             "#@#",
             Optional(Sequence(Text(), drop())),
-            Optional(NewLine())
+            Optional(NewLine_old())
         );
     }
 
@@ -392,11 +392,11 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * NormalCharacter <- !NewLine ANY
+     * NormalCharacter <- !NewLine_old ANY
      */
     Rule NormalCharacter() {
         return Sequence(
-            TestNot(NewLine()),
+            TestNot(NewLine_old()),
             ANY
         );
     }
@@ -411,9 +411,9 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * NewLine <- '\n' / ('\r' '\n'?)
+     * NewLine_old <- '\n' / ('\r' '\n'?)
      */
-    Rule NewLine() {
+    Rule NewLine_old() {
         return FirstOf(
             "\n",
             Sequence("\r", Optional("\n"))
@@ -421,12 +421,12 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * BlankLine <- Space_old* NewLine
+     * BlankLine <- Space_old* NewLine_old
      */
     Rule BlankLine() {
         return Sequence(
             ZeroOrMore(Space_old()),
-            NewLine()
+            NewLine_old()
         );
     }
 
@@ -447,6 +447,37 @@ class ReviewParser extends BaseParser<Object> {
             parent.appendChild(child);
         }
         return true;
+    }
+
+    /*
+     * Newline <- "\r\n" / "\n"
+     */
+    Rule Newline() {
+        return FirstOf(
+            "\r\n",
+            "\n"
+        );
+    }
+
+    /*
+     * BlankLines <- ([ \t]* Newline)*
+     */
+    Rule BlankLines() {
+        return ZeroOrMore(
+            Sequence(
+                ZeroOrMore(AnyOf(new char[] {' ', '\t'})),
+                Newline()
+            )
+        );
+    }
+
+    /*
+     * Spacer <- [ \t\r\n]*
+     */
+    Rule Spacer() {
+        return ZeroOrMore(
+            AnyOf(new char[] {' ', '\t', '\r', '\n'})
+        );
     }
 
     /*

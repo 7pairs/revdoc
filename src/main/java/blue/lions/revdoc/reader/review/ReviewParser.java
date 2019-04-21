@@ -430,24 +430,9 @@ class ReviewParser extends BaseParser<Object> {
         );
     }
 
-    /*
-     * 子ノードを追加する。
-     *
-     * スタックのトップに子ノード、その次に親となるノードが積まれている必要がある。
-     *
-     * @return {@code true}
-     */
-    boolean appendChild() {
-        // 子ノードを追加する
-        Node child = popAs();
-        ParentNode parent = peekAs();
-        if (child instanceof FootnoteNode) {
-            parent.appendChild(0, child);
-        } else {
-            parent.appendChild(child);
-        }
-        return true;
-    }
+
+
+
 
     /*
      * Newline <- "\r\n" / "\n"
@@ -487,6 +472,25 @@ class ReviewParser extends BaseParser<Object> {
         return AnyOf(
             new char[] {' ', '　', '\t'}
         );
+    }
+
+    /*
+     * 子ノードを追加する。
+     *
+     * スタックのトップに子ノード、その次に親となるノードが積まれている必要がある。
+     *
+     * @return {@code true}
+     */
+    boolean appendChild() {
+        // 子ノードを追加する
+        Node child = popAs();
+        ParentNode parent = peekAs();
+        if (child instanceof FootnoteNode) {
+            parent.appendChild(0, child);
+        } else {
+            parent.appendChild(child);
+        }
+        return true;
     }
 
     /*

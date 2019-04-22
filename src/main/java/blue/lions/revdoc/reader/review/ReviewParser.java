@@ -28,6 +28,7 @@ import blue.lions.revdoc.ast.OrderedListItemNode;
 import blue.lions.revdoc.ast.OrderedListNode;
 import blue.lions.revdoc.ast.ParagraphNode;
 import blue.lions.revdoc.ast.ParentNode;
+import blue.lions.revdoc.ast.SingleLineCommentNode;
 import blue.lions.revdoc.ast.TextNode;
 import blue.lions.revdoc.ast.UnorderedListItemNode;
 import blue.lions.revdoc.ast.UnorderedListNode;
@@ -434,8 +435,66 @@ class ReviewParser extends BaseParser<Object> {
 
 
 
+
+
     /*
-     * Newline <- "\r\n" / "\n"
+     * SingleLineComments = SingleLineComment SingleLineComments?
+     */
+    Rule SingleLineComments() {
+        return Sequence(
+            SingleLineComment(),
+            Optional(SingleLineComments())
+        );
+    }
+
+    /*
+     * SingleLineComment = "#@" [^\r\n]* Newline? BlankLines
+     */
+    Rule SingleLineComment() {
+        return Sequence(
+            "#@",
+            push(match()),
+            ZeroOrMore(NoneOf(new char[] {'\r', '\n'})),
+            push(match()),
+            Optional(Newline()),
+            push(match()),
+            BlankLines(),
+            swap3(),
+            push(new SingleLineCommentNode(popAsString() + popAsString() + popAsString() + match()))
+        );
+    }
+
+    /*
+     * Digits = Digit+
+     */
+    Rule Digits() {
+        return OneOrMore(
+            Digit()
+        );
+    }
+
+    /*
+     * Digit = [0-9]
+     */
+    Rule Digit() {
+        return CharRange(
+            '0',
+            '9'
+        );
+    }
+
+    /*
+     * LowerAlphabet = [a-z]
+     */
+    Rule LowerAlphabet() {
+        return CharRange(
+            'a',
+            'z'
+        );
+    }
+
+    /*
+     * Newline = "\r\n" / "\n"
      */
     Rule Newline() {
         return FirstOf(
@@ -445,7 +504,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * BlankLines <- ([ \t]* Newline)*
+     * BlankLines = ([ \t]* Newline)*
      */
     Rule BlankLines() {
         return ZeroOrMore(
@@ -457,7 +516,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Spacer <- [ \t\r\n]*
+     * Spacer = [ \t\r\n]*
      */
     Rule Spacer() {
         return ZeroOrMore(
@@ -466,7 +525,7 @@ class ReviewParser extends BaseParser<Object> {
     }
 
     /*
-     * Space <- [ 　\t]
+     * Space = [ 　\t]
      */
     Rule Space() {
         return AnyOf(
@@ -491,6 +550,10 @@ class ReviewParser extends BaseParser<Object> {
             parent.appendChild(child);
         }
         return true;
+    }
+
+    String popAsString() {
+        return (String) pop();
     }
 
     /*

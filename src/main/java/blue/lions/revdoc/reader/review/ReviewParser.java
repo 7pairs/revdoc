@@ -15,564 +15,205 @@
  */
 package blue.lions.revdoc.reader.review;
 
-import blue.lions.revdoc.ast.ChapterNode;
-import blue.lions.revdoc.ast.ColumnNode;
-import blue.lions.revdoc.ast.FootnoteIDNode;
-import blue.lions.revdoc.ast.FootnoteNode;
-import blue.lions.revdoc.ast.HeadingNode;
-import blue.lions.revdoc.ast.ImageNode;
-import blue.lions.revdoc.ast.InnerParagraphNode;
-import blue.lions.revdoc.ast.LinkNode;
-import blue.lions.revdoc.ast.Node;
-import blue.lions.revdoc.ast.OrderedListItemNode;
-import blue.lions.revdoc.ast.OrderedListNode;
-import blue.lions.revdoc.ast.ParagraphNode;
-import blue.lions.revdoc.ast.ParentNode;
-import blue.lions.revdoc.ast.SingleLineCommentNode;
-import blue.lions.revdoc.ast.TextNode;
-import blue.lions.revdoc.ast.UnorderedListItemNode;
-import blue.lions.revdoc.ast.UnorderedListNode;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 
 /*
- * Re:VIEWフォーマットのパーサー。
+ * Re:VIEW文書のパーサークラス。
  */
 @BuildParseTree
 class ReviewParser extends BaseParser<Object> {
 
     /*
-     * Chapter <- (BlankLine / Comment)* (Block (BlankLine / Comment)*)*
-     *
-     * Block要素はRule内で結果Nodeをpushしている。
-     * その結果NodeをChapterNodeの子に追加する。
+     * Start = Spacer Chapters? Spacer
      */
-    Rule Chapter(String id) {
+    Rule Start() {
         return Sequence(
-            push(new ChapterNode(id)),
-            ZeroOrMore(FirstOf(BlankLine(), Comment())),
-            ZeroOrMore(Block(), appendChild(), ZeroOrMore(FirstOf(BlankLine(), Comment())))
+            Spacer(),
+            Optional(Chapters()),
+            Spacer()
         );
     }
 
     /*
-     * Block <- (
-     *     Column /
-     *     Heading5 /
-     *     Heading4 /
-     *     Heading3 /
-     *     Heading2 /
-     *     Heading1 /
-     *     Image /
-     *     Footnote /
-     *     UnorderedList /
-     *     OrderedList /
-     *     Paragraph
-     * )
-     *
-     * 各要素はRule内で結果Nodeをpushすること。
+     * Chapters = Chapter Chapters?
      */
-    Rule Block() {
-        return FirstOf(
-            Column(),
-            Heading5(),
-            Heading4(),
-            Heading3(),
-            Heading2(),
-            Heading1(),
-            Image(),
-            Footnote(),
-            UnorderedList(),
-            OrderedList(),
-            Paragraph()
-        );
-    }
-
-    /*
-     * IsNotBlock <- !'#@#' !'=' !' *' !'//footnote' !'//image'
-     */
-    Rule IsNotBlock() {
+    Rule Chapters() {
         return Sequence(
-            TestNot("#@#"),
-            TestNot("="),
-            TestNot(" *"),
-            TestNot("//footnote"),
-            TestNot("//image")
+            Chapter(),
+            Optional(Chapters())
         );
     }
 
     /*
-     * Column <- '='+ '[column]' Space_old* Text NewLine_old (BlankLine / Comment)* (BlockInColumn (BlankLine / Comment)*)*
-     *           '='+ '[/column]' NewLine_old?
+     * Chapter = SingleLineComments? Headline Contents?
      */
-    Rule Column() {
+    Rule Chapter() {
+        return Sequence(
+            Optional(SingleLineComments()),
+            Headline(),
+            Optional(Contents())
+        );
+    }
+
+    /*
+     * Headline = "="+ BraceArg? Space* SingleLineContent BlankLines
+     */
+    Rule Headline() {
         return Sequence(
             OneOrMore("="),
-            "[column]",
-            ZeroOrMore(Space_old()),
-            Text(),
-            push(new ColumnNode(popAs())),
-            NewLine_old(),
-            ZeroOrMore(FirstOf(BlankLine(), Comment())),
-            ZeroOrMore(BlockInColumn(), appendChild(), ZeroOrMore(FirstOf(BlankLine(), Comment()))),
-            ZeroOrMore(NewLine_old()),
-            OneOrMore("="),
-            "[/column]",
-            Optional(NewLine_old())
+            Optional(BraceArg()),
+            ZeroOrMore(Space()),
+            SingleLineContent(),
+            BlankLines()
         );
     }
 
     /*
-     * BlockInColumn <- (Image / Footnote / UnorderedList / OrderedList / Paragraph)
+     * Contents = &. Content Contents? BlankLines
      */
-    Rule BlockInColumn() {
+    Rule Contents() {
+        return Sequence(
+            Test(ANY),
+            Content(),
+            Optional(Contents()),
+            BlankLines()
+        );
+    }
+
+    /*
+     * Content = SingleLineComment / BlockElement / UList / OList / DList / Paragraph / Column
+     */
+    Rule Content() {
         return FirstOf(
-            Image(),
-            Footnote(),
-            UnorderedList(),
-            OrderedList(),
-            Paragraph()
+            SingleLineComment(),
+            BlockElement(),
+            UList(),
+            OList(),
+            DList(),
+            Paragraph(),
+            Column()
         );
     }
 
     /*
-     * Heading5 <- '=====' ('[' LimitedText(']') ']')? Space_old* Text NewLine_old?
-     *
-     * 共通RuleのHeadingに任せる。
-     */
-    Rule Heading5() {
-        return Heading(5);
-    }
-
-    /*
-     * Heading4 <- '====' ('[' LimitedText(']') ']')? Space_old* Text NewLine_old?
-     *
-     * 共通RuleのHeadingに任せる。
-     */
-    Rule Heading4() {
-        return Heading(4);
-    }
-
-    /*
-     * Heading3 <- '===' ('[' LimitedText(']') ']')? Space_old* Text NewLine_old?
-     *
-     * 共通RuleのHeadingに任せる。
-     */
-    Rule Heading3() {
-        return Heading(3);
-    }
-
-    /*
-     * Heading2 <- '==' ('[' LimitedText(']') ']')? Space_old* Text NewLine_old?
-     *
-     * 共通RuleのHeadingに任せる。
-     */
-    Rule Heading2() {
-        return Heading(2);
-    }
-
-    /*
-     * Heading1 <- '=' ('[' LimitedText(']') ']')? Space_old* Text NewLine_old?
-     *
-     * 共通RuleのHeadingに任せる。
-     */
-    Rule Heading1() {
-        return Heading(1);
-    }
-
-    /*
-     * Heading1〜5の共通Rule。
-     *
-     * @param level 見出しレベル
-     * @return 構築した @{code Rule}
-     */
-    Rule Heading(int level) {
-        return Sequence(
-            "=====".substring(5 - level),
-            Optional(FirstOf(Sequence("{", LimitedText(TestNot("}")), "}"), push(""))),
-            ZeroOrMore(Space_old()),
-            Text(),
-            push(new HeadingNode(level, new TextNode(popAs()), popAs())),
-            Optional(NewLine_old())
-        );
-    }
-
-    /*
-     * Image <- '//image[' LimitedText(']') '][' LimitedText(']') ']' ('[scale=' LimitedText(']') ']')? '{'
-     *          (!'//}' ANY)* '//}'
-     */
-    Rule Image() {
-        return Sequence(
-            "//image[",
-            LimitedText(TestNot("]")),
-            "][",
-            LimitedText(TestNot("]")),
-            "]",
-            Optional(FirstOf(
-                Sequence("[scale=", LimitedText(TestNot("]")), "]"),
-                push("")
-            )),
-            swap3(),
-            push(new ImageNode(popAs(), popAs(), popAs())),
-            "{",
-            ZeroOrMore(TestNot("//}"), ANY),
-            "//}"
-        );
-    }
-
-    /*
-     * Footnote <- '//footnote[' LimitedText(!']') '][' InnerParagraph(!']') ']' NewLine_old?
-     */
-    Rule Footnote() {
-        return Sequence(
-            "//footnote[",
-            LimitedText(TestNot("]")),
-            "][",
-            InnerParagraph(TestNot("]")),
-            swap(),
-            push(new FootnoteNode(popAs(), popAs())),
-            "]",
-            Optional(NewLine_old())
-        );
-    }
-
-    /*
-     * UnorderedList <- UnorderedListItemNode+ NewLine_old?
-     */
-    Rule UnorderedList() {
-        return Sequence(
-            push(new UnorderedListNode()),
-            OneOrMore(UnorderedListItem(), appendChild()),
-            Optional(NewLine_old())
-        );
-    }
-
-    /*
-     * UnorderedListItem <- ' ' '*'+ Space_old? InnerParagraph(&ANY) NewLine_old?
-     */
-    Rule UnorderedListItem() {
-        return Sequence(
-            " ",
-            OneOrMore("*"),
-            push(match()),
-            Optional(Space_old()),
-            InnerParagraph(Test(ANY)),
-            swap(),
-            push(new UnorderedListItemNode(((String) pop()).length(), popAs())),
-            Optional(NewLine_old())
-        );
-    }
-
-    /*
-     * OrderedList <- OrderedListItem+ NewLine_old?
-     */
-    Rule OrderedList() {
-        return Sequence(
-            push(new OrderedListNode()),
-            OneOrMore(OrderedListItem(), appendChild()),
-            Optional(NewLine_old())
-        );
-    }
-
-    /*
-     * OrderedListItem <- ' ' ['1'-'9'] ['0'-'9']* '.' Space_old? InnerParagraph(&ANY) NewLine_old?
-     */
-    Rule OrderedListItem() {
-        return Sequence(
-            " ",
-            CharRange('1', '9'),
-            ZeroOrMore(CharRange('0', '9')),
-            ".",
-            Optional(Space_old()),
-            InnerParagraph(Test(ANY)),
-            push(new OrderedListItemNode(popAs())),
-            Optional(NewLine_old())
-        );
-    }
-
-    /*
-     * Paragraph <- ((Inline / Text) NewLine_old?)+
+     * Paragraph = !"=" ParagraphSubs BlankLines
      */
     Rule Paragraph() {
         return Sequence(
-            push(new ParagraphNode()),
-            OneOrMore(FirstOf(
-                Sequence(Inline(), appendChild()),
-                Sequence(Text(), push(new TextNode(popAs())), appendChild())
-            ), Optional(NewLine_old()))
+            TestNot("="),
+            ParagraphSubs(),
+            BlankLines()
         );
     }
 
     /*
-     * InnerParagraph <- (Inline / Text)+ NewLine_old?
+     * ParagraphSubs = ParagraphSub ParagraphSubs?
      */
-    Rule InnerParagraph(Rule rule) {
+    Rule ParagraphSubs() {
         return Sequence(
-            push(new InnerParagraphNode()),
-            OneOrMore(FirstOf(
-                Sequence(Inline(), appendChild()),
-                Sequence(LimitedText(rule), push(new TextNode(popAs())), appendChild())
-            )),
-            Optional(NewLine_old())
+            ParagraphSub(),
+            Optional(ParagraphSubs())
         );
     }
 
     /*
-     * Inline <- FootnoteID / Link
+     * ParagraphSub = InlineElement Newline? / ContentText Newline?
      */
-    Rule Inline() {
+    Rule ParagraphSub() {
         return FirstOf(
-            FootnoteID(),
-            Link()
+            Sequence(InlineElement(), Optional(Newline())),
+            Sequence(ContentText(), Optional(Newline()))
         );
     }
 
     /*
-     * FootnoteID <- '@<fn>{' LimitedText(!'}') '}'
+     * ContentText = !Newline !Headline !SingleLineComment !BlockElement !UList !OList !DList
+     *               ( !InlineElement [^\r\n] )+
      */
-    Rule FootnoteID() {
+    Rule ContentText() {
         return Sequence(
-            "@<fn>{",
-            LimitedText(TestNot("}")),
-            push(new FootnoteIDNode(popAs())),
+            TestNot(Newline()),
+            TestNot(Headline()),
+            TestNot(SingleLineComment()),
+            TestNot(BlockElement()),
+            TestNot(UList()),
+            TestNot(OList()),
+            TestNot(DList()),
+            OneOrMore(TestNot(InlineElement()), NoneOf(new char[] {'\r', '\n'}))
+        );
+    }
+
+    /*
+     * BlockElement = "//" LowerAlphabet+ BracketArg* "{" BlankLines BlockElementContents? "//}" BlankLines
+     *              / "//" LowerAlphabet+ BracketArg* BlankLines
+     */
+    Rule BlockElement() {
+        return FirstOf(
+            Sequence("//", OneOrMore(LowerAlphabet()), ZeroOrMore(BracketArg()), "{", BlankLines(),
+                Optional(BlockElementContents()), "//}", BlankLines()),
+            Sequence("//", OneOrMore(LowerAlphabet()), ZeroOrMore(BracketArg()), BlankLines())
+        );
+    }
+
+    /*
+     * InlineElement = "@<" [^>\r\n]+ ">" "{" InlineElementContents? "}"
+     */
+    Rule InlineElement() {
+        return Sequence(
+            "@<",
+            OneOrMore(NoneOf(new char[] {'>', '\r', '\n'})),
+            ">",
+            "{",
+            Optional(InlineElementContents()),
             "}"
         );
     }
 
     /*
-     * Link <- '@<href>{' LimitedText(!',' !'}') (',' Space_old* LimitedText(!'}'))? '}'
+     * Column = ColumnHeadline ColumnContents? ColumnTerminator?
      */
-    Rule Link() {
+    Rule Column() {
         return Sequence(
-            "@<href>{",
-            LimitedText(Sequence(TestNot(","), TestNot("}"))),
-            FirstOf(
-                Sequence(",", ZeroOrMore(Space_old()), LimitedText(TestNot("}"))),
-                push("")
-            ),
-            swap(),
-            push(new LinkNode(popAs(), popAs())),
-            "}"
+            ColumnHeadline(),
+            Optional(ColumnContents()),
+            Optional(ColumnTerminator())
         );
     }
 
     /*
-     * Comment <- '#@#' Text? NewLine_old?
+     * ColumnHeadline = "="+ "[column]" Space* SingleLineContent BlankLines
+     */
+    Rule ColumnHeadline() {
+        return Sequence(
+            OneOrMore("="),
+            "[column]",
+            ZeroOrMore(Space()),
+            SingleLineContent(),
+            BlankLines()
+        );
+    }
+
+    /*
+     * ColumnContents = &. ColumnContent ColumnContents? BlankLines
+     */
+    Rule ColumnContents() {
+        return Sequence(
+            Test(ANY),
+            ColumnContent(),
+            Optional(ColumnContents()),
+            BlankLines()
+        );
+    }
+
+    /*
+     * pop() の結果を代入先の型で取得する。
      *
-     * Textがpushした文字列は破棄する。
-     */
-    Rule Comment() {
-        return Sequence(
-            "#@#",
-            Optional(Sequence(Text(), drop())),
-            Optional(NewLine_old())
-        );
-    }
-
-    /*
-     * Text <- IsNotBlock (!Inline NormalCharacter)+
-     *
-     * 共通RuleのLimitedTextに任せる。
-     */
-    Rule Text() {
-        return LimitedText(Test(ANY));
-    }
-
-    /*
-     * LimitedText <- IsNotBlock (rule !Inline NormalCharacter)*
-     *
-     * マッチした文字列をpushする。
-     */
-    Rule LimitedText(Rule rule) {
-        return Sequence(
-            IsNotBlock(),
-            OneOrMore(rule, TestNot(Inline()), NormalCharacter()),
-            push(match())
-        );
-    }
-
-    /*
-     * NormalCharacter <- !NewLine_old ANY
-     */
-    Rule NormalCharacter() {
-        return Sequence(
-            TestNot(NewLine_old()),
-            ANY
-        );
-    }
-
-    /*
-     * Space_old <- (' ' / '\t')+
-     */
-    Rule Space_old() {
-        return OneOrMore(
-            FirstOf(" ", "\t")
-        );
-    }
-
-    /*
-     * NewLine_old <- '\n' / ('\r' '\n'?)
-     */
-    Rule NewLine_old() {
-        return FirstOf(
-            "\n",
-            Sequence("\r", Optional("\n"))
-        );
-    }
-
-    /*
-     * BlankLine <- Space_old* NewLine_old
-     */
-    Rule BlankLine() {
-        return Sequence(
-            ZeroOrMore(Space_old()),
-            NewLine_old()
-        );
-    }
-
-
-
-
-
-
-
-    /*
-     * SingleLineComments = SingleLineComment SingleLineComments?
-     */
-    Rule SingleLineComments() {
-        return Sequence(
-            SingleLineComment(),
-            Optional(SingleLineComments())
-        );
-    }
-
-    /*
-     * SingleLineComment = "#@" [^\r\n]* Newline? BlankLines
-     */
-    Rule SingleLineComment() {
-        return Sequence(
-            "#@",
-            push(match()),
-            ZeroOrMore(NoneOf(new char[] {'\r', '\n'})),
-            push(match()),
-            Optional(Newline()),
-            push(match()),
-            BlankLines(),
-            swap3(),
-            push(new SingleLineCommentNode(popAsString() + popAsString() + popAsString() + match()))
-        );
-    }
-
-    /*
-     * Digits = Digit+
-     */
-    Rule Digits() {
-        return OneOrMore(
-            Digit()
-        );
-    }
-
-    /*
-     * Digit = [0-9]
-     */
-    Rule Digit() {
-        return CharRange(
-            '0',
-            '9'
-        );
-    }
-
-    /*
-     * LowerAlphabet = [a-z]
-     */
-    Rule LowerAlphabet() {
-        return CharRange(
-            'a',
-            'z'
-        );
-    }
-
-    /*
-     * Newline = "\r\n" / "\n"
-     */
-    Rule Newline() {
-        return FirstOf(
-            "\r\n",
-            "\n"
-        );
-    }
-
-    /*
-     * BlankLines = ([ \t]* Newline)*
-     */
-    Rule BlankLines() {
-        return ZeroOrMore(
-            Sequence(
-                ZeroOrMore(AnyOf(new char[] {' ', '\t'})),
-                Newline()
-            )
-        );
-    }
-
-    /*
-     * Spacer = [ \t\r\n]*
-     */
-    Rule Spacer() {
-        return ZeroOrMore(
-            AnyOf(new char[] {' ', '\t', '\r', '\n'})
-        );
-    }
-
-    /*
-     * Space = [ 　\t]
-     */
-    Rule Space() {
-        return AnyOf(
-            new char[] {' ', '　', '\t'}
-        );
-    }
-
-    /*
-     * 子ノードを追加する。
-     *
-     * スタックのトップに子ノード、その次に親となるノードが積まれている必要がある。
-     *
-     * @return {@code true}
-     */
-    boolean appendChild() {
-        // 子ノードを追加する
-        Node child = popAs();
-        ParentNode parent = peekAs();
-        if (child instanceof FootnoteNode) {
-            parent.appendChild(0, child);
-        } else {
-            parent.appendChild(child);
-        }
-        return true;
-    }
-
-    String popAsString() {
-        return (String) pop();
-    }
-
-    /*
-     * {@code pop()} の結果を代入先に応じた型で取得する。
-     *
-     * @return {@code pop()} の結果
+     * @return pop() の結果
      */
     <T> T popAs() {
-        // 代入先に応じた型で返す
+        // 代入先の型で返す
         return (T) pop();
-    }
-
-    /*
-     * {@code peek()} の結果を代入先に応じた型で取得する。
-     *
-     * @return {@code peek()} の結果
-     */
-    <T> T peekAs() {
-        // 代入先に応じた型で返す
-        return (T) peek();
     }
 }

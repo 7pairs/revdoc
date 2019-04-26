@@ -15,6 +15,8 @@
  */
 package blue.lions.revdoc.ast;
 
+import blue.lions.revdoc.ast.old.*;
+
 /**
  * 抽象構文木を辿るVisitorのインターフェイス。
  */

@@ -13,42 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.ParentNode;
+import blue.lions.revdoc.ast.Visitor;
 
 /**
- * 番号なしリストの要素を表現するノード。
+ * コラムを表現するノード。
  */
-public class UnorderedListItemNode extends ParentNode {
+public class ColumnNode extends ParentNode {
 
-    /* ネストレベル */
-    private int level;
+    /* タイトル */
+    private String title;
 
     /**
-     * {@code UnorderedListItemNode} オブジェクトを構築する。
+     * {@code ColumnNode} オブジェクトを構築する。
      *
-     * @param level ネストレベル
-     * @param innerParagraphNode 要素内容
+     * @param title タイトル
      */
-    public UnorderedListItemNode(int level, InnerParagraphNode innerParagraphNode) {
+    public ColumnNode(String title) {
         // フィールドを初期化する
-        this.level = level;
-        appendChild(innerParagraphNode);
+        this.title = title;
     }
 
     /**
-     * ネストレベルを取得する。
+     * タイトルを取得する。
      *
-     * @return ネストレベル
+     * @return タイトル
      */
-    public int getLevel() {
-        // ネストレベルを返す
-        return level;
+    public String getTitle() {
+        // タイトルを返す
+        return title;
     }
 
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // UnorderedListItemNodeに対する処理を実行する
+        // ColumnNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

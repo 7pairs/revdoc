@@ -13,17 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.ParentNode;
+import blue.lions.revdoc.ast.Visitor;
+import blue.lions.revdoc.ast.old.InnerParagraphNode;
 
 /**
- * 部を表現するノード。
+ * 番号付きリストの要素を表現するノード。
  */
-public class PartNode extends ParentNode {
+public class OrderedListItemNode extends ParentNode {
+
+    /**
+     * {@code OrderedListItemNode} オブジェクトを構築する。
+     *
+     * @param innerParagraphNode 要素内容
+     */
+    public OrderedListItemNode(InnerParagraphNode innerParagraphNode) {
+        // フィールドを初期化する
+        appendChild(innerParagraphNode);
+    }
 
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // PartNodeに対する処理を実行する
+        // OrderedListItemNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

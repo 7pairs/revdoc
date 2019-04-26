@@ -16,14 +16,14 @@
 package blue.lions.revdoc.reader.review;
 
 import blue.lions.revdoc.Arguments;
-import blue.lions.revdoc.ast.AppendixNode;
-import blue.lions.revdoc.ast.BackMatterNode;
-import blue.lions.revdoc.ast.BodyMatterNode;
-import blue.lions.revdoc.ast.ChapterNode;
-import blue.lions.revdoc.ast.FrontMatterNode;
+import blue.lions.revdoc.ast.old.AppendixNode;
+import blue.lions.revdoc.ast.old.BackMatterNode;
+import blue.lions.revdoc.ast.old.BodyMatterNode;
+import blue.lions.revdoc.ast.old.ChapterNode;
+import blue.lions.revdoc.ast.old.FrontMatterNode;
 import blue.lions.revdoc.ast.Node;
-import blue.lions.revdoc.ast.PartNode;
-import blue.lions.revdoc.ast.RootNode;
+import blue.lions.revdoc.ast.old.PartNode;
+import blue.lions.revdoc.ast.old.RootNode;
 import blue.lions.revdoc.reader.Reader;
 import org.parboiled.Parboiled;
 import org.parboiled.parserunners.ReportingParseRunner;

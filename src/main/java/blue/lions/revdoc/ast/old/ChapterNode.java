@@ -13,40 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.ParentNode;
+import blue.lions.revdoc.ast.Visitor;
 
 /**
- * コラムを表現するノード。
+ * 章を表現するノード。
  */
-public class ColumnNode extends ParentNode {
+public class ChapterNode extends ParentNode {
 
-    /* タイトル */
-    private String title;
+    /* ID */
+    private String id;
 
     /**
-     * {@code ColumnNode} オブジェクトを構築する。
+     * {@code ChapterNode} オブジェクトを構築する。
      *
-     * @param title タイトル
+     * @param id ID
      */
-    public ColumnNode(String title) {
+    public ChapterNode(String id) {
         // フィールドを初期化する
-        this.title = title;
+        this.id = id;
     }
 
     /**
-     * タイトルを取得する。
+     * IDを取得する。
      *
-     * @return タイトル
+     * @return ID
      */
-    public String getTitle() {
-        // タイトルを返す
-        return title;
+    public String getId() {
+        // ファイル名を返す
+        return id;
     }
 
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // ColumnNodeに対する処理を実行する
+        // ChapterNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

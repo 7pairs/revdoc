@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.ParentNode;
+import blue.lions.revdoc.ast.Visitor;
 
 /**
- * 本文を表現するノード。
+ * 前付を表現するノード。
  */
-public class BodyMatterNode extends ParentNode {
+public class FrontMatterNode extends ParentNode {
 
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // BodyMatterNodeに対する処理を実行する
+        // FrontMatterNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

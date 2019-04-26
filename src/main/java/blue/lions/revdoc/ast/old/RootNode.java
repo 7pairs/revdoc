@@ -13,27 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.ParentNode;
+import blue.lions.revdoc.ast.Visitor;
 
 /**
- * 番号付きリストの要素を表現するノード。
+ * 抽象構文木のルートノード。
  */
-public class OrderedListItemNode extends ParentNode {
+public class RootNode extends ParentNode {
+
+    /* タイトル */
+    private String title;
 
     /**
-     * {@code OrderedListItemNode} オブジェクトを構築する。
+     * {@code RootNode} オブジェクトを構築する。
      *
-     * @param innerParagraphNode 要素内容
+     * @param title タイトル
      */
-    public OrderedListItemNode(InnerParagraphNode innerParagraphNode) {
+    public RootNode(String title) {
         // フィールドを初期化する
-        appendChild(innerParagraphNode);
+        this.title = title;
     }
 
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // OrderedListItemNodeに対する処理を実行する
+        // RootNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

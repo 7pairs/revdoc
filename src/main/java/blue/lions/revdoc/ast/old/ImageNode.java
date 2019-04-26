@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.Node;
+import blue.lions.revdoc.ast.Visitor;
 
 import java.math.BigDecimal;
 

@@ -13,55 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.Node;
+import blue.lions.revdoc.ast.Visitor;
 
 /**
- * リンクを表現するノード。
+ * 文字列を表現するノード。
  */
-public class LinkNode extends ParentNode {
+public class TextNode extends Node {
 
-    /* URL */
-    private String url;
-
-    /* ラベル */
-    private String label;
+    /* 文字列 */
+    private String text;
 
     /**
-     * {@code LinkNode} オブジェクトを構築する。
+     * {@code TextNode} オブジェクトを構築する。
      *
-     * @param url URL
-     * @param label ラベル
+     * @param text 文字列
      */
-    public LinkNode(String url, String label) {
+    public TextNode(String text) {
         // フィールドを初期化する
-        this.url = url;
-        this.label = label.length() > 0 ? label : url;
+        this.text = text;
     }
 
     /**
-     * URLを取得する。
+     * 文字列を取得する。
      *
-     * @return URL
+     * @return 文字列
      */
-    public String getUrl() {
-        // URLを返す
-        return url;
-    }
-
-    /**
-     * ラベルを取得する。
-     *
-     * @return ラベル
-     */
-    public String getLabel() {
-        // ラベルを返す
-        return label;
+    public String getText() {
+        // 文字列を返す
+        return text;
     }
 
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // LinkNodeに対する処理を実行する
+        // TextNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

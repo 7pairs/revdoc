@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.ParentNode;
+import blue.lions.revdoc.ast.Visitor;
 
 /**
- * 番号なしリストを表現するノード。
+ * 付録を表現するノード。
  */
-public class UnorderedListNode extends ParentNode {
+public class AppendixNode extends ParentNode {
 
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // UnorderedListNodeに対する処理を実行する
+        // AppendixNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

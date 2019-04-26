@@ -1,4 +1,7 @@
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.Node;
+import blue.lions.revdoc.ast.Visitor;
 
 public class SingleLineCommentNode extends Node {
 

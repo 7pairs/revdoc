@@ -13,41 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.ParentNode;
+import blue.lions.revdoc.ast.Visitor;
 
 /**
- * 見出しを表現するノード。
+ * 脚注を表現するノード。
  */
-public class HeadingNode extends ParentNode {
-
-    /* 見出しレベル */
-    private int level;
+public class FootnoteNode extends ParentNode {
 
     /* ID */
     private String id;
 
     /**
-     * {@code HeadingNode} オブジェクトを構築する。
+     * {@code FootnoteNode} オブジェクトを構築する。
      *
-     * @param level 見出しレベル
-     * @param child 子ノード
-     * @param id ID
+     * @param id 脚注ID
+     * @param innerParagraphNode 脚注内容
      */
-    public HeadingNode(int level, Node child, String id) {
+    public FootnoteNode(String id, InnerParagraphNode innerParagraphNode) {
         // フィールドを初期化する
-        this.level = level;
-        appendChild(child);
         this.id = id;
-    }
-
-    /**
-     * 見出しレベルを取得する。
-     *
-     * @return 見出しレベル
-     */
-    public int getLevel() {
-        // 見出しレベルを返す
-        return level;
+        appendChild(innerParagraphNode);
     }
 
     /**
@@ -63,7 +51,7 @@ public class HeadingNode extends ParentNode {
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // HeadingNodeに対する処理を実行する
+        // FootnoteNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

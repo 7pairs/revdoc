@@ -13,17 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.Node;
+import blue.lions.revdoc.ast.Visitor;
 
 /**
- * 内部段落を表現するノード。
+ * 脚注IDを表現するノード。
  */
-public class InnerParagraphNode extends ParentNode {
+public class FootnoteIDNode extends Node {
+
+    /* ID */
+    private String id;
+
+    /**
+     * {@code FootnoteIDNode} オブジェクトを構築する。
+     *
+     * @param id ID
+     */
+    public FootnoteIDNode(String id) {
+        // フィールドを初期化する
+        this.id = id;
+    }
+
+    /**
+     * IDを取得する。
+     *
+     * @return ID
+     */
+    public String getId() {
+        // IDを返す
+        return id;
+    }
 
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // SingleLineParagraphNodeに対する処理を実行する
+        // FootnoteIDNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

@@ -13,30 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.ParentNode;
+import blue.lions.revdoc.ast.Visitor;
 
 /**
- * 抽象構文木のルートノード。
+ * 内部段落を表現するノード。
  */
-public class RootNode extends ParentNode {
-
-    /* タイトル */
-    private String title;
-
-    /**
-     * {@code RootNode} オブジェクトを構築する。
-     *
-     * @param title タイトル
-     */
-    public RootNode(String title) {
-        // フィールドを初期化する
-        this.title = title;
-    }
+public class InnerParagraphNode extends ParentNode {
 
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // RootNodeに対する処理を実行する
+        // SingleLineParagraphNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

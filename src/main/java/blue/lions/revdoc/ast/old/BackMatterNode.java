@@ -13,40 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package blue.lions.revdoc.ast;
+package blue.lions.revdoc.ast.old;
+
+import blue.lions.revdoc.ast.ParentNode;
+import blue.lions.revdoc.ast.Visitor;
 
 /**
- * 文字列を表現するノード。
+ * 後付を表現するノード。
  */
-public class TextNode extends Node {
-
-    /* 文字列 */
-    private String text;
-
-    /**
-     * {@code TextNode} オブジェクトを構築する。
-     *
-     * @param text 文字列
-     */
-    public TextNode(String text) {
-        // フィールドを初期化する
-        this.text = text;
-    }
-
-    /**
-     * 文字列を取得する。
-     *
-     * @return 文字列
-     */
-    public String getText() {
-        // 文字列を返す
-        return text;
-    }
+public class BackMatterNode extends ParentNode {
 
     /** {@inheritDoc} */
     @Override
     public void accept(Visitor visitor) {
-        // TextNodeに対する処理を実行する
+        // BackMatterNodeに対する処理を実行する
         visitor.visit(this);
     }
 }

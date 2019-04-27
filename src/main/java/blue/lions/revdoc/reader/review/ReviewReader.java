@@ -124,9 +124,7 @@ public class ReviewReader extends Reader {
         // Re:VIEWフォーマットのファイルをパースする
         String review = readFile(Paths.get(inputDirectoryPath, fileName));
         ReviewParser reviewParser = Parboiled.createParser(ReviewParser.class);
-        ParsingResult<ChapterNode> result = new ReportingParseRunner<ChapterNode>(reviewParser.Chapter(
-            fileName.substring(0, fileName.lastIndexOf("."))
-        )).run(review);
+        ParsingResult<ChapterNode> result = new ReportingParseRunner<ChapterNode>(reviewParser.Start()).run(review);
 
         // パース結果を返す
         return result.resultValue;

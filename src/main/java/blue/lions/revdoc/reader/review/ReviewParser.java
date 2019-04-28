@@ -15,25 +15,6 @@
  */
 package blue.lions.revdoc.reader.review;
 
-<<<<<<< Updated upstream
-=======
-import blue.lions.revdoc.ast.old.ChapterNode;
-import blue.lions.revdoc.ast.old.ColumnNode;
-import blue.lions.revdoc.ast.old.FootnoteIDNode;
-import blue.lions.revdoc.ast.old.FootnoteNode;
-import blue.lions.revdoc.ast.old.HeadingNode;
-import blue.lions.revdoc.ast.old.ImageNode;
-import blue.lions.revdoc.ast.old.InnerParagraphNode;
-import blue.lions.revdoc.ast.old.LinkNode;
-import blue.lions.revdoc.ast.Node;
-import blue.lions.revdoc.ast.old.OrderedListItemNode;
-import blue.lions.revdoc.ast.old.OrderedListNode;
-import blue.lions.revdoc.ast.old.ParagraphNode;
-import blue.lions.revdoc.ast.ParentNode;
-import blue.lions.revdoc.ast.old.TextNode;
-import blue.lions.revdoc.ast.old.UnorderedListItemNode;
-import blue.lions.revdoc.ast.old.UnorderedListNode;
->>>>>>> Stashed changes
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;

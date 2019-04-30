@@ -15,30 +15,30 @@
  */
 package blue.lions.revdoc.reader.review;
 
-import static org.assertj.core.api.Assertions.*;
-
-import blue.lions.revdoc.ast.old.ChapterNode;
-import blue.lions.revdoc.ast.old.ColumnNode;
-import blue.lions.revdoc.ast.old.FootnoteIDNode;
-import blue.lions.revdoc.ast.old.FootnoteNode;
-import blue.lions.revdoc.ast.old.HeadingNode;
-import blue.lions.revdoc.ast.old.ImageNode;
-import blue.lions.revdoc.ast.old.InnerParagraphNode;
-import blue.lions.revdoc.ast.old.LinkNode;
-import blue.lions.revdoc.ast.old.OrderedListItemNode;
-import blue.lions.revdoc.ast.old.OrderedListNode;
-import blue.lions.revdoc.ast.old.ParagraphNode;
-import blue.lions.revdoc.ast.ParentNode;
-import blue.lions.revdoc.ast.old.TextNode;
-import blue.lions.revdoc.ast.old.UnorderedListItemNode;
-import blue.lions.revdoc.ast.old.UnorderedListNode;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.parboiled.Parboiled;
-import org.parboiled.parserunners.ReportingParseRunner;
-import org.parboiled.support.ParsingResult;
-
-import java.math.BigDecimal;
+//import static org.assertj.core.api.Assertions.*;
+//
+//import blue.lions.revdoc.ast.old.ChapterNode;
+//import blue.lions.revdoc.ast.old.ColumnNode;
+//import blue.lions.revdoc.ast.old.FootnoteIDNode;
+//import blue.lions.revdoc.ast.old.FootnoteNode;
+//import blue.lions.revdoc.ast.old.HeadingNode;
+//import blue.lions.revdoc.ast.old.ImageNode;
+//import blue.lions.revdoc.ast.old.InnerParagraphNode;
+//import blue.lions.revdoc.ast.old.LinkNode;
+//import blue.lions.revdoc.ast.old.OrderedListItemNode;
+//import blue.lions.revdoc.ast.old.OrderedListNode;
+//import blue.lions.revdoc.ast.old.ParagraphNode;
+//import blue.lions.revdoc.ast.ParentNode;
+//import blue.lions.revdoc.ast.old.TextNode;
+//import blue.lions.revdoc.ast.old.UnorderedListItemNode;
+//import blue.lions.revdoc.ast.old.UnorderedListNode;
+//import org.junit.jupiter.api.DisplayName;
+//import org.junit.jupiter.api.Test;
+//import org.parboiled.Parboiled;
+//import org.parboiled.parserunners.ReportingParseRunner;
+//import org.parboiled.support.ParsingResult;
+//
+//import java.math.BigDecimal;
 
 public class ReviewParserTest {
 

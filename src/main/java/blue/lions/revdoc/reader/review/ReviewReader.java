@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Re:VIEWフォーマットのファイルを扱うReader。
+ * Re:VIEW文書を扱うReader。
  */
 public class ReviewReader extends Reader {
 
@@ -115,7 +115,7 @@ public class ReviewReader extends Reader {
     }
 
     /*
-     * Re:VIEWフォーマットのファイルをパースし、結果を抽象構文木に変換する。
+     * Re:VIEW文書をパースし、結果を抽象構文木に変換する。
      *
      * @param fileName ファイル名
      * @return パース結果
@@ -131,7 +131,7 @@ public class ReviewReader extends Reader {
     }
 
     /*
-     * 複数のRe:VIEWフォーマットのファイルをパースし、結果を抽象構文木のリストに変換する。
+     * 複数のRe:VIEW文書をパースし、結果を抽象構文木のリストに変換する。
      *
      * @param fileNames ファイル名
      * @return パース結果
@@ -140,7 +140,7 @@ public class ReviewReader extends Reader {
         // パース結果格納用
         List<Node> documents = new ArrayList<>();
 
-        // Re:VIEWフォーマットのファイルをパースする
+        // Re:VIEW文書をパースする
         for (String fileName : fileNames) {
             documents.add(parseChapter(fileName));
         }

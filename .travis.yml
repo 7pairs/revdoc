@@ -1,9 +1,9 @@
 language: java
 
-dist: trusty
+dist: xenial
 
 jdk:
-  - oraclejdk11
+  - openjdk11
 
 after_success:
   - ./gradlew jacocoTestReport coveralls

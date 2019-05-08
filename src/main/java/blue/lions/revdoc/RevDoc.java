@@ -33,11 +33,11 @@ public class RevDoc {
         // コマンドライン引数をパースする
         Arguments arguments = Arguments.parse(args);
 
-        // 原稿ファイルを解析する
+        // 原稿を抽象構文木に変換する
         Reader reader = Reader.getInstance(arguments);
         Node ast = reader.run();
 
-        // 原稿ファイルの内容を出力する
+        // 抽象構文木の内容を出力する
         Writer writer = Writer.getInstance(arguments);
         writer.run(ast);
     }

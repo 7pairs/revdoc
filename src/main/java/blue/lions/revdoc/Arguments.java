@@ -40,7 +40,7 @@ public class Arguments {
     private Arguments() {}
 
     /**
-     * コマンドライン引数をパースし、結果を {@code Arguments} オブジェクトに変換する。
+     * コマンドライン引数をパースし、結果を {@code Arguments} に変換する。
      *
      * @param args コマンドライン引数
      * @return パース結果

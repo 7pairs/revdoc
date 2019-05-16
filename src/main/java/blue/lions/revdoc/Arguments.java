@@ -24,6 +24,8 @@ import org.kohsuke.args4j.Option;
  */
 public class Arguments {
 
+    // region フィールド
+
     /* 入力ディレクトリパス */
     @Option(name = "-i", aliases = "--input")
     private String inputDirectoryPath;
@@ -36,8 +38,9 @@ public class Arguments {
     @Option(name = "-t", aliases = "--template")
     private String templateFilePath;
 
-    /* コンストラクタ(隠蔽) */
-    private Arguments() {}
+    // endregion
+
+    // region 静的メソッド
 
     /**
      * コマンドライン引数をパースし、結果を {@code Arguments} に変換する。
@@ -60,6 +63,17 @@ public class Arguments {
         // パース結果を返す
         return arguments;
     }
+
+    // endregion
+
+    // region コンストラクタ
+
+    /* 隠蔽 */
+    private Arguments() {}
+
+    // endregion
+
+    // region ゲッター
 
     /**
      * 入力ディレクトリパスを取得する。
@@ -90,4 +104,6 @@ public class Arguments {
         // テンプレートファイルパスを返す
         return templateFilePath;
     }
+
+    // endregion
 }

@@ -20,14 +20,16 @@ import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.reader.review.ReviewReader;
 
 /**
- * すべてのReaderのベースクラス。
+ * Readerのベースクラス。
  */
 public abstract class Reader {
+
+    // region 静的メソッド
 
     /**
      * コマンドライン引数に対応したReaderを取得する。
      *
-     * 現時点では {@code ReviewReader} を固定で返す。
+     * 現時点では引数にかかわらず {@code ReviewReader} を固定で返す。
      *
      * @param arguments コマンドライン引数
      * @return Reader
@@ -37,10 +39,16 @@ public abstract class Reader {
         return new ReviewReader(arguments);
     }
 
+    // endregion
+
+    // region メソッド
+
     /**
-     * 原稿を抽象構文木に変換する。
+     * 原稿データを抽象構文木に変換する。
      *
      * @return 抽象構文木
      */
     public abstract Node run();
+
+    // endregion
 }

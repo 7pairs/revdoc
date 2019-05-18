@@ -41,7 +41,7 @@ public abstract class Reader {
 
     // endregion
 
-    // region メソッド
+    // region 抽象メソッド
 
     /**
      * 原稿データを抽象構文木に変換する。

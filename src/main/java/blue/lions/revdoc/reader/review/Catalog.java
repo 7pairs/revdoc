@@ -27,10 +27,14 @@ import java.util.Map;
  */
 class Catalog {
 
+    // region 内部クラス
+
     /*
      * 部の情報を格納するクラス。
      */
     static class Part {
+
+        // region フィールド
 
         /* ファイル名 */
         private String fileName;
@@ -38,8 +42,12 @@ class Catalog {
         /* 章のファイル名 */
         private List<String> chapterFileNames;
 
+        // endregion
+
+        // region コンストラクタ
+
         /*
-         * {@code Part} オブジェクトを構築する。
+         * Partオブジェクトを生成する。
          *
          * @param fileName ファイル名
          * @param chapterFileNames 章のファイル名
@@ -49,6 +57,10 @@ class Catalog {
             this.fileName = fileName;
             this.chapterFileNames = chapterFileNames;
         }
+
+        // endregion
+
+        // region ゲッター
 
         /*
          * ファイル名を取得する。
@@ -69,7 +81,13 @@ class Catalog {
             // 章のファイル名を返す
             return Collections.unmodifiableList(chapterFileNames);
         }
+
+        // endregion
     }
+
+    // endregion
+
+    // region フィールド
 
     /* 前付 */
     private List<String> predef;
@@ -83,22 +101,30 @@ class Catalog {
     /* 後付 */
     private List<String> postdef;
 
+    // endregion
+
+    // region コンストラクタ
+
     /*
-     * {@code Catalog} オブジェクトを構築する。
+     * Catalogオブジェクトを生成する。
      *
      * @param yamlString YAML文字列
      */
     Catalog(String yamlString) {
-        // YAMLをパースする
+        // YAML文字列をパースする
         Yaml yaml = new Yaml();
         Map<String, Object> catalog = yaml.load(yamlString);
 
         // フィールドを初期化する
-        predef = (List<String>) catalog.getOrDefault("PREDEF", Collections.emptyList());
-        chapters = parseChapters((List) catalog.get("CHAPS"));
-        appendix = (List<String>) catalog.getOrDefault("APPENDIX", Collections.emptyList());
-        postdef = (List<String>) catalog.getOrDefault("POSTDEF", Collections.emptyList());
+        this.predef = (List<String>) catalog.getOrDefault("PREDEF", Collections.emptyList());
+        this.chapters = parseChapters((List) catalog.get("CHAPS"));
+        this.appendix = (List<String>) catalog.getOrDefault("APPENDIX", Collections.emptyList());
+        this.postdef = (List<String>) catalog.getOrDefault("POSTDEF", Collections.emptyList());
     }
+
+    // endregion
+
+    // region ゲッター
 
     /*
      * 前付を取得する。
@@ -140,8 +166,12 @@ class Catalog {
         return Collections.unmodifiableList(postdef);
     }
 
+    // endregion
+
+    // region 非公開メソッド
+
     /*
-     * 本編情報をパースし、結果を @{code List<Part>} に変換する。
+     * 本編情報をパースし、結果をList<Part>に変換する。
      *
      * @param chaps 本編情報
      * @return パース結果
@@ -172,4 +202,6 @@ class Catalog {
         // パース結果を返す
         return chapters;
     }
+
+    // endregion
 }

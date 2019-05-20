@@ -32,10 +32,14 @@ import java.util.Map;
  */
 class Config {
 
+    // region 内部クラス
+
     /*
      * 発行年月の情報を格納するクラス。
      */
     static class HistoryItem {
+
+        // region フィールド
 
         /* 日付 */
         private LocalDate date;
@@ -43,8 +47,12 @@ class Config {
         /* バージョン */
         private String version;
 
+        // endregion
+
+        // region コンストラクタ
+
         /*
-         * {@code HistoryItem} オブジェクトを構築する。
+         * HistoryItemオブジェクトを生成する。
          *
          * @param date 日付
          * @param version バージョン
@@ -54,6 +62,10 @@ class Config {
             this.date = date;
             this.version = version;
         }
+
+        // endregion
+
+        // region フィールド
 
         /*
          * 日付を取得する。
@@ -74,7 +86,13 @@ class Config {
             // バージョンを返す
             return version;
         }
+
+        // endregion
     }
+
+    // endregion
+
+    // region フィールド
 
     /* ブック名 */
     private String bookName;
@@ -97,8 +115,12 @@ class Config {
     /* 権利表記 */
     private String rights;
 
+    // endregion
+
+    // region コンストラクタ
+
     /*
-     * {@code Config} オブジェクトを構築する。
+     * Configオブジェクトを生成する。
      *
      * @param yamlString YAML文字列
      */
@@ -116,6 +138,10 @@ class Config {
         history = parseHistory((List<List>) config.get("history"));
         rights = (String) config.get("rights");
     }
+
+    // endregion
+
+    // region ゲッター
 
     /*
      * ブック名を取得する。
@@ -187,8 +213,12 @@ class Config {
         return rights;
     }
 
+    // endregion
+
+    // region 非公開メソッド
+
     /*
-     * 人物情報をパースし、結果を {@code List<String>} に変換する。
+     * 人物情報をパースし、結果をList<String>に変換する。
      *
      * 以下のパターンに対応している。
      *   1. "著者 太郎"
@@ -234,7 +264,7 @@ class Config {
     }
 
     /*
-     * 指定された日付を {@code LocalDate} に変換する。
+     * 指定された日付をLocalDateに変換する。
      *
      * @param date 変換元の {@code Date} もしくは {@code String}
      * @return 変換後の {@code LocalDate}
@@ -252,7 +282,7 @@ class Config {
     }
 
     /*
-     * 発行年月をパースし、結果を {@code List<List<HistoryItem>>} に変換する。
+     * 発行年月をパースし、結果をList<List<HistoryItem>>に変換する。
      *
      * 以下のパターンに対応している。
      *   1. [["2018-10-08", "2018-12-30", ...], ["2019-04-14", ...], ...]
@@ -294,4 +324,6 @@ class Config {
         // パース結果を返す
         return historyItems;
     }
+
+    // endregion
 }

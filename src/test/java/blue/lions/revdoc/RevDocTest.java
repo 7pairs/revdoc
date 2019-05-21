@@ -15,7 +15,10 @@
  */
 package blue.lions.revdoc;
 
+import org.junit.jupiter.api.DisplayName;
+
+@DisplayName("RevDoc")
 public class RevDocTest {
 
-    // ToDo: PowerMockがJUnit5に対応したらテストを追加する
+    // ToDo: PowerMockがJUnit5に対応次第テストを追加する
 }

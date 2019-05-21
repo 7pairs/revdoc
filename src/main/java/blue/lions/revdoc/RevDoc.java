@@ -24,7 +24,7 @@ import blue.lions.revdoc.writer.Writer;
  */
 public class RevDoc {
 
-    // region 静的メソッド
+    // region - Static methods.
 
     /**
      * revdocのエントリーポイント。
@@ -37,11 +37,11 @@ public class RevDoc {
 
         // 原稿データを抽象構文木に変換する
         Reader reader = Reader.getInstance(arguments);
-        Node ast = reader.run();
+        Node ast = reader.read();
 
         // 抽象構文木の内容を出力する
         Writer writer = Writer.getInstance(arguments);
-        writer.run(ast);
+        writer.write(ast);
     }
 
     // endregion

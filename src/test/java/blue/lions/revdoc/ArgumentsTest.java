@@ -18,85 +18,107 @@ package blue.lions.revdoc;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("Arguments")
 public class ArgumentsTest {
 
-    @Test
-    @DisplayName("parse() : 不正なオプションを指定したとき : 空の Arguments オブジェクトを返すこと")
-    public void parse_SpecifyInvalidOption_ReturnEmptyArguments() {
-        String[] args = new String[] {"--invalid", "invalid"};
-        Arguments arguments = Arguments.parse(args);
+    @Nested
+    @DisplayName("parse()")
+    public class ParseTest {
 
-        assertThat(arguments).isNotNull();
-        assertThat(arguments.getInputDirectoryPath()).isNull();
-        assertThat(arguments.getOutputFilePath()).isNull();
-        assertThat(arguments.getTemplateFilePath()).isNull();
+        @Test
+        @DisplayName("不正なオプションを指定したとき - 空のArgumentsオブジェクトを返すこと")
+        public void shouldReturnEmptyArguments_whenSpecifyInvalidOption() {
+            String[] args = new String[] {"--invalid", "invalid"};
+            Arguments arguments = Arguments.parse(args);
+
+            assertThat(arguments).isNotNull();
+            assertThat(arguments.getInputDirectoryPath()).isNull();
+            assertThat(arguments.getOutputFilePath()).isNull();
+            assertThat(arguments.getTemplateFilePath()).isNull();
+        }
     }
 
-    @Test
-    @DisplayName("getInputDirectoryPath() : parse() に -i オプションを指定したとき : オプション値を返すこと")
-    public void getInputDirectoryPath_SpecifyIOptionForParse_ReturnOptionValue() {
-        final String EXPECTED = "./articles";
+    @Nested
+    @DisplayName("getInputDirectoryPath()")
+    public class GetInputDirectoryPathTest {
 
-        String[] args = new String[] {"-i", EXPECTED};
-        Arguments arguments = Arguments.parse(args);
+        @Test
+        @DisplayName("parse()に-iオプションを指定したとき - オプション値を返すこと")
+        public void shouldReturnOptionValue_whenSpecifyIOptionForParse() {
+            final String EXPECTED = "./articles";
 
-        assertThat(arguments.getInputDirectoryPath()).isEqualTo(EXPECTED);
+            String[] args = new String[] {"-i", EXPECTED};
+            Arguments arguments = Arguments.parse(args);
+
+            assertThat(arguments.getInputDirectoryPath()).isEqualTo(EXPECTED);
+        }
+
+        @Test
+        @DisplayName("parse()に--inputオプションを指定したとき - オプション値を返すこと")
+        public void shouldReturnOptionValue_whenSpecifyInputOptionForParse() {
+            final String EXPECTED = "./articles";
+
+            String[] args = new String[] {"--input", EXPECTED};
+            Arguments arguments = Arguments.parse(args);
+
+            assertThat(arguments.getInputDirectoryPath()).isEqualTo(EXPECTED);
+        }
     }
 
-    @Test
-    @DisplayName("getInputDirectoryPath() : parse() に --input オプションを指定したとき : オプション値を返すこと")
-    public void getInputDirectoryPath_SpecifyInputOptionForParse_ReturnOptionValue() {
-        final String EXPECTED = "./articles";
+    @Nested
+    @DisplayName("getOutputFilePath()")
+    public class GetOutputFilePathTest {
 
-        String[] args = new String[] {"--input", EXPECTED};
-        Arguments arguments = Arguments.parse(args);
+        @Test
+        @DisplayName("parse()に-oオプションを指定したとき - オプション値を返すこと")
+        public void shouldReturnOptionValue_whenSpecifyOOptionForParse() {
+            final String EXPECTED = "./output.docx";
 
-        assertThat(arguments.getInputDirectoryPath()).isEqualTo(EXPECTED);
+            String[] args = new String[] {"-o", EXPECTED};
+            Arguments arguments = Arguments.parse(args);
+
+            assertThat(arguments.getOutputFilePath()).isEqualTo(EXPECTED);
+        }
+
+        @Test
+        @DisplayName("parse()に--outputオプションを指定したとき - オプション値を返すこと")
+        public void shouldReturnOptionValue_whenSpecifyOutputOptionForParse() {
+            final String EXPECTED = "./output.docx";
+
+            String[] args = new String[] {"--output", EXPECTED};
+            Arguments arguments = Arguments.parse(args);
+
+            assertThat(arguments.getOutputFilePath()).isEqualTo(EXPECTED);
+        }
     }
 
-    @Test
-    @DisplayName("getOutputFilePath() : parse() に -o オプションを指定したとき : オプション値を返すこと")
-    public void getOutputFilePath_SpecifyOOptionForParse_ReturnOptionValue() {
-        final String EXPECTED = "./output.docx";
+    @Nested
+    @DisplayName("getTemplateFilePath()")
+    public class GetTemplateFilePathTest {
 
-        String[] args = new String[] {"-o", EXPECTED};
-        Arguments arguments = Arguments.parse(args);
+        @Test
+        @DisplayName("parse()に-tオプションを指定したとき - オプション値を返すこと")
+        public void shouldReturnOptionValue_whenSpecifyTOptionForParse() {
+            final String EXPECTED = "./template.docx";
 
-        assertThat(arguments.getOutputFilePath()).isEqualTo(EXPECTED);
-    }
+            String[] args = new String[] {"-t", EXPECTED};
+            Arguments arguments = Arguments.parse(args);
 
-    @Test
-    @DisplayName("getOutputFilePath() : parse() に --output オプションを指定したとき : オプション値を返すこと")
-    public void getOutputFilePath_SpecifyOutputOptionForParse_ReturnOptionValue() {
-        final String EXPECTED = "./output.docx";
+            assertThat(arguments.getTemplateFilePath()).isEqualTo(EXPECTED);
+        }
 
-        String[] args = new String[] {"--output", EXPECTED};
-        Arguments arguments = Arguments.parse(args);
+        @Test
+        @DisplayName("parse()に--templateオプションを指定したとき - オプション値を返すこと")
+        public void shouldReturnOptionValue_whenSpecifyTemplateOptionForParse() {
+            final String EXPECTED = "./template.docx";
 
-        assertThat(arguments.getOutputFilePath()).isEqualTo(EXPECTED);
-    }
+            String[] args = new String[] {"--template", EXPECTED};
+            Arguments arguments = Arguments.parse(args);
 
-    @Test
-    @DisplayName("getTemplateFilePath() : parse() に -t オプションを指定したとき : オプション値を返すこと")
-    public void getTemplateFilePath_SpecifyTOptionForParse_ReturnOptionValue() {
-        final String EXPECTED = "./template.docx";
-
-        String[] args = new String[] {"-t", EXPECTED};
-        Arguments arguments = Arguments.parse(args);
-
-        assertThat(arguments.getTemplateFilePath()).isEqualTo(EXPECTED);
-    }
-
-    @Test
-    @DisplayName("getTemplateFilePath() : parse() に --template オプションを指定したとき : オプション値を返すこと")
-    public void getTemplateFilePath_SpecifyTemplateOptionForParse_ReturnOptionValue() {
-        final String EXPECTED = "./template.docx";
-
-        String[] args = new String[] {"--template", EXPECTED};
-        Arguments arguments = Arguments.parse(args);
-
-        assertThat(arguments.getTemplateFilePath()).isEqualTo(EXPECTED);
+            assertThat(arguments.getTemplateFilePath()).isEqualTo(EXPECTED);
+        }
     }
 }

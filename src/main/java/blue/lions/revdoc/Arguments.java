@@ -24,7 +24,7 @@ import org.kohsuke.args4j.Option;
  */
 public class Arguments {
 
-    // region フィールド
+    // region - Fields.
 
     /* 入力ディレクトリパス */
     @Option(name = "-i", aliases = "--input")
@@ -40,7 +40,7 @@ public class Arguments {
 
     // endregion
 
-    // region 静的メソッド
+    // region - Static methods.
 
     /**
      * コマンドライン引数をパースし、結果を {@code Arguments} に変換する。
@@ -66,14 +66,14 @@ public class Arguments {
 
     // endregion
 
-    // region コンストラクタ
+    // region - Constructor.
 
-    /* 隠蔽 */
+    /* コンストラクタを隠蔽する */
     private Arguments() {}
 
     // endregion
 
-    // region ゲッター
+    // region - Getter.
 
     /**
      * 入力ディレクトリパスを取得する。

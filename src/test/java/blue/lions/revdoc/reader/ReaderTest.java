@@ -20,18 +20,25 @@ import static org.assertj.core.api.Assertions.*;
 import blue.lions.revdoc.Arguments;
 import blue.lions.revdoc.reader.review.ReviewReader;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("Reader")
 public class ReaderTest {
 
-    @Test
-    @DisplayName("getInstance : 条件なし : ReviewReaderを返すこと")
-    public void getInstance_None_ReturnReviewReader() {
-        final Class EXPECTED = ReviewReader.class;
+    @Nested
+    @DisplayName("getInstance()")
+    public class GetInstance {
 
-        Arguments arguments = Arguments.parse();
-        Reader reader = Reader.getInstance(arguments);
+        @Test
+        @DisplayName("条件なし - ReviewReaderを返すこと")
+        public void shouldReturnReviewReader() {
+            final Class EXPECTED = ReviewReader.class;
 
-        assertThat(reader).isInstanceOf(EXPECTED);
+            Arguments arguments = Arguments.parse();
+            Reader reader = Reader.getInstance(arguments);
+
+            assertThat(reader).isInstanceOf(EXPECTED);
+        }
     }
 }

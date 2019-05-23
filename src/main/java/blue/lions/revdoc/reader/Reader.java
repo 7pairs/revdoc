@@ -24,31 +24,29 @@ import blue.lions.revdoc.reader.review.ReviewReader;
  */
 public abstract class Reader {
 
-    // region 静的メソッド
+    // region - Static methods.
 
     /**
      * コマンドライン引数に対応したReaderを取得する。
      *
-     * 現時点では引数にかかわらず {@code ReviewReader} を固定で返す。
-     *
      * @param arguments コマンドライン引数
-     * @return Reader
+     * @return 対応するReader
      */
     public static Reader getInstance(Arguments arguments) {
-        // ReviewReaderを返す
+        // 現時点では無条件でReviewReaderを返す
         return new ReviewReader(arguments);
     }
 
     // endregion
 
-    // region 抽象メソッド
+    // region - Abstract methods.
 
     /**
      * 原稿データを抽象構文木に変換する。
      *
      * @return 抽象構文木
      */
-    public abstract Node run();
+    public abstract Node read();
 
     // endregion
 }

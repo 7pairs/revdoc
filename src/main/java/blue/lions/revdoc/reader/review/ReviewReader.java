@@ -59,7 +59,7 @@ public class ReviewReader extends Reader {
      * {@inheritDoc}
      */
     @Override
-    public Node run() {
+    public Node read() {
         // config.ymlを読み込む
         Config config = new Config(readFile(Paths.get(inputDirectoryPath, "config.yml")));
 

@@ -42,5 +42,5 @@ public abstract class Writer {
      *
      * @param ast 抽象構文木
      */
-    public abstract void run(Node ast);
+    public abstract void write(Node ast);
 }

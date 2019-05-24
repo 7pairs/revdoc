@@ -27,14 +27,14 @@ import java.util.Map;
  */
 class Catalog {
 
-    // region 内部クラス
+    // region - Inner classes.
 
     /*
      * 部の情報を格納するクラス。
      */
     static class Part {
 
-        // region フィールド
+        // region - Fields.
 
         /* ファイル名 */
         private String fileName;
@@ -44,7 +44,7 @@ class Catalog {
 
         // endregion
 
-        // region コンストラクタ
+        // region - Constructor.
 
         /*
          * Partオブジェクトを生成する。
@@ -60,7 +60,7 @@ class Catalog {
 
         // endregion
 
-        // region ゲッター
+        // region Getters.
 
         /*
          * ファイル名を取得する。

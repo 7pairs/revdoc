@@ -56,7 +56,7 @@ public class WordWriter extends Writer {
      * {@inheritDoc}
      */
     @Override
-    public void run(Node ast) {
+    public void write(Node ast) {
         // Wordファイルを出力する
         try (
             InputStream inputStream = Files.newInputStream(Paths.get(templateFilePath));

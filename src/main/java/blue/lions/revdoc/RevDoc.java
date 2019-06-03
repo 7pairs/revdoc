@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Jun-ya HASEBA
+ * Copyright 2019 HASEBA, Junya
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,14 @@ import blue.lions.revdoc.reader.Reader;
 import blue.lions.revdoc.writer.Writer;
 
 /**
- * revdocのメインクラス。
+ * RevDocのメインクラス。
  */
 public class RevDoc {
 
     // region - Static methods.
 
     /**
-     * revdocのエントリーポイント。
+     * RevDocのエントリーポイント。
      *
      * @param args コマンドライン引数
      */

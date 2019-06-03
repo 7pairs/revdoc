@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Jun-ya HASEBA
+ * Copyright 2019 HASEBA, Junya
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,15 @@
 package blue.lions.revdoc;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 
 @DisplayName("RevDoc")
 public class RevDocTest {
 
-    // ToDo: PowerMockがJUnit5に対応次第テストを追加する
+    @Nested
+    @DisplayName("main()")
+    public class MainTest {
+
+        // ToDo: テストを実装する
+    }
 }

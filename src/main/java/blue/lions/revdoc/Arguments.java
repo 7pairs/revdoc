@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Jun-ya HASEBA
+ * Copyright 2019 HASEBA, Junya
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,14 +66,14 @@ public class Arguments {
 
     // endregion
 
-    // region - Constructor.
+    // region - Constructors.
 
     /* コンストラクタを隠蔽する */
     private Arguments() {}
 
     // endregion
 
-    // region - Getter.
+    // region - Getters.
 
     /**
      * 入力ディレクトリパスを取得する。

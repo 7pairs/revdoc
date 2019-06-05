@@ -30,7 +30,7 @@ public class ArgumentsTest {
 
         @Test
         @DisplayName("不正なオプションを指定したとき - 空のArgumentsオブジェクトを返すこと")
-        public void shouldReturnEmptyArguments_whenSpecifyInvalidOption() {
+        public void shouldReturnEmptyArguments_whenCalledWithInvalidOption() {
             String[] args = new String[] {"--invalid", "invalid"};
             Arguments arguments = Arguments.parse(args);
 
@@ -47,7 +47,7 @@ public class ArgumentsTest {
 
         @Test
         @DisplayName("parse()に-iオプションを指定したとき - オプション値を返すこと")
-        public void shouldReturnOptionValue_whenSpecifyIOptionForParse() {
+        public void shouldReturnOptionValue_whenParseIsCalledWithIOption() {
             final String EXPECTED = "./articles";
 
             String[] args = new String[] {"-i", EXPECTED};
@@ -58,7 +58,7 @@ public class ArgumentsTest {
 
         @Test
         @DisplayName("parse()に--inputオプションを指定したとき - オプション値を返すこと")
-        public void shouldReturnOptionValue_whenSpecifyInputOptionForParse() {
+        public void shouldReturnOptionValue_whenParseIsCalledWithInputOption() {
             final String EXPECTED = "./articles";
 
             String[] args = new String[] {"--input", EXPECTED};
@@ -74,7 +74,7 @@ public class ArgumentsTest {
 
         @Test
         @DisplayName("parse()に-oオプションを指定したとき - オプション値を返すこと")
-        public void shouldReturnOptionValue_whenSpecifyOOptionForParse() {
+        public void shouldReturnOptionValue_whenParseIsCalledWithOOption() {
             final String EXPECTED = "./output.docx";
 
             String[] args = new String[] {"-o", EXPECTED};
@@ -85,7 +85,7 @@ public class ArgumentsTest {
 
         @Test
         @DisplayName("parse()に--outputオプションを指定したとき - オプション値を返すこと")
-        public void shouldReturnOptionValue_whenSpecifyOutputOptionForParse() {
+        public void shouldReturnOptionValue_whenParseIsCalledWithOutputOption() {
             final String EXPECTED = "./output.docx";
 
             String[] args = new String[] {"--output", EXPECTED};
@@ -101,7 +101,7 @@ public class ArgumentsTest {
 
         @Test
         @DisplayName("parse()に-tオプションを指定したとき - オプション値を返すこと")
-        public void shouldReturnOptionValue_whenSpecifyTOptionForParse() {
+        public void shouldReturnOptionValue_whenParseIsCalledWithTOption() {
             final String EXPECTED = "./template.docx";
 
             String[] args = new String[] {"-t", EXPECTED};
@@ -112,7 +112,7 @@ public class ArgumentsTest {
 
         @Test
         @DisplayName("parse()に--templateオプションを指定したとき - オプション値を返すこと")
-        public void shouldReturnOptionValue_whenSpecifyTemplateOptionForParse() {
+        public void shouldReturnOptionValue_whenParseIsCalledWithTemplateOption() {
             final String EXPECTED = "./template.docx";
 
             String[] args = new String[] {"--template", EXPECTED};

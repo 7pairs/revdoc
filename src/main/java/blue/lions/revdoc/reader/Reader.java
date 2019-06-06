@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Jun-ya HASEBA
+ * Copyright 2019 HASEBA, Junya
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public abstract class Reader {
     // region - Static methods.
 
     /**
-     * コマンドライン引数に対応したReaderを取得する。
+     * コマンドライン引数に対応した {@code Reader} を取得する。
      *
      * @param arguments コマンドライン引数
      * @return 対応するReader

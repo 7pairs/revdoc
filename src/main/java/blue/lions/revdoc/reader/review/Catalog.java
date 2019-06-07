@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Jun-ya HASEBA
+ * Copyright 2019 HASEBA, Junya
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ class Catalog {
 
         // endregion
 
-        // region - Constructor.
+        // region - Constructors.
 
         /*
          * Partオブジェクトを生成する。
@@ -87,7 +87,7 @@ class Catalog {
 
     // endregion
 
-    // region フィールド
+    // region - Fields.
 
     /* 前付 */
     private List<String> predef;
@@ -103,7 +103,7 @@ class Catalog {
 
     // endregion
 
-    // region コンストラクタ
+    // region - Constructors.
 
     /*
      * Catalogオブジェクトを生成する。
@@ -124,7 +124,7 @@ class Catalog {
 
     // endregion
 
-    // region ゲッター
+    // region - Getters.
 
     /*
      * 前付を取得する。
@@ -168,7 +168,7 @@ class Catalog {
 
     // endregion
 
-    // region 非公開メソッド
+    // region - Private methods.
 
     /*
      * 本編情報をパースし、結果をList<Part>に変換する。

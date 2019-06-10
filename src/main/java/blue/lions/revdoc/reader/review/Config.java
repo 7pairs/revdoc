@@ -32,14 +32,14 @@ import java.util.Map;
  */
 class Config {
 
-    // region 内部クラス
+    // region - Inner Classes.
 
     /*
      * 発行年月の情報を格納するクラス。
      */
     static class HistoryItem {
 
-        // region フィールド
+        // region - Fields.
 
         /* 日付 */
         private LocalDate date;
@@ -49,7 +49,7 @@ class Config {
 
         // endregion
 
-        // region コンストラクタ
+        // region - Constructors.
 
         /*
          * HistoryItemオブジェクトを生成する。
@@ -65,7 +65,7 @@ class Config {
 
         // endregion
 
-        // region フィールド
+        // region - Getters.
 
         /*
          * 日付を取得する。
@@ -92,9 +92,9 @@ class Config {
 
     // endregion
 
-    // region フィールド
+    // region - Fields.
 
-    /* ブック名 */
+    /* 名称 */
     private String bookName;
 
     /* 書名 */
@@ -117,7 +117,7 @@ class Config {
 
     // endregion
 
-    // region コンストラクタ
+    // region - Constructors.
 
     /*
      * Configオブジェクトを生成する。
@@ -134,22 +134,22 @@ class Config {
         bookTitle = (String) config.get("booktitle");
         authors = parsePeople(config.get("aut"));
         covers = parsePeople(config.get("cov"));
-        date = convertIntoLocalDate(config.get("date"));
+        date = convertToLocalDate(config.get("date"));
         history = parseHistory((List<List>) config.get("history"));
         rights = (String) config.get("rights");
     }
 
     // endregion
 
-    // region ゲッター
+    // region Getters.
 
     /*
-     * ブック名を取得する。
+     * 名称を取得する。
      *
-     * @return ブック名
+     * @return 名称
      */
     String getBookName() {
-        // ブック名を返す
+        // 名称を返す
         return bookName;
     }
 
@@ -215,12 +215,12 @@ class Config {
 
     // endregion
 
-    // region 非公開メソッド
+    // region - Private Methods.
 
     /*
      * 人物情報をパースし、結果をList<String>に変換する。
      *
-     * 以下のパターンに対応している。
+     * 以下の6パターンに対応している。
      *   1. "著者 太郎"
      *   2. 著者 太郎
      *   3. ["著者 太郎", "著者 次郎", ...]
@@ -264,12 +264,12 @@ class Config {
     }
 
     /*
-     * 指定された日付をLocalDateに変換する。
+     * 日付をLocalDateに変換する。
      *
-     * @param date 変換元の {@code Date} もしくは {@code String}
-     * @return 変換後の {@code LocalDate}
+     * @param date 変換元のDateもしくはString
+     * @return 変換結果
      */
-    private LocalDate convertIntoLocalDate(Object date) {
+    private LocalDate convertToLocalDate(Object date) {
         // 日付をLocalDateに変換する
         if (date instanceof Date) {
             return Instant.ofEpochMilli(((Date) date).getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
@@ -284,7 +284,7 @@ class Config {
     /*
      * 発行年月をパースし、結果をList<List<HistoryItem>>に変換する。
      *
-     * 以下のパターンに対応している。
+     * 以下の4パターンに対応している。
      *   1. [["2018-10-08", "2018-12-30", ...], ["2019-04-14", ...], ...]
      *   2. [[2018-10-08, 2018-12-30, ...], [2019-04-14, ...], ...]
      *   3. [["2018-10-08 技術書典5", "2018-12-30 C95", ...], ["2019-04-14 技術書典6", ...], ...]
@@ -308,12 +308,12 @@ class Config {
             for (Object printing : edition) {
                 if (printing instanceof Date) {
                     // パターン2の場合
-                    editionItems.add(new HistoryItem(convertIntoLocalDate(printing), ""));
+                    editionItems.add(new HistoryItem(convertToLocalDate(printing), ""));
                 } else if (printing instanceof String) {
                     // パターン1, 3, 4の場合
                     String[] elements = ((String) printing).split(" ", 2);
                     editionItems.add(new HistoryItem(
-                        LocalDate.parse(elements[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                        convertToLocalDate(elements[0]),
                         elements.length == 2 ? elements[1] : ""
                     ));
                 }

@@ -18,31 +18,39 @@ package blue.lions.revdoc.reader.review;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("Config")
 public class ConfigTest {
 
-    @Test
-    @DisplayName("getBookName() : bookname の値が引用符に囲まれているとき : 対応する値を返すこと")
-    public void getBookName_BooknameValueHasQuotation_ReturnValue() {
-        final String EXPECTED = "hobopy";
+    @Nested
+    @DisplayName("getBookName()")
+    public class GetBookNameTest {
 
-        String yamlString = String.format("bookname: \"%s\"", EXPECTED);
-        Config config = new Config(yamlString);
+        @Test
+        @DisplayName("booknameの値が引用符に囲まれているとき - 対応する値を返すこと")
+        public void getBookName_BooknameValueHasQuotation_ReturnValue() {
+            final String EXPECTED = "hobopy";
 
-        assertThat(config.getBookName()).isEqualTo(EXPECTED);
+            String yamlString = String.format("bookname: \"%s\"", EXPECTED);
+            Config config = new Config(yamlString);
+
+            assertThat(config.getBookName()).isEqualTo(EXPECTED);
+        }
+
+        @Test
+        @DisplayName("getBookName() : bookname の値が引用符に囲まれていないとき : 対応する値を返すこと")
+        public void getBookName_BooknameValueDoesNotHaveQuotation_ReturnValue() {
+            final String EXPECTED = "hobopy";
+
+            String yamlString = String.format("bookname: %s", EXPECTED);
+            Config config = new Config(yamlString);
+
+            assertThat(config.getBookName()).isEqualTo(EXPECTED);
+        }
     }
 
-    @Test
-    @DisplayName("getBookName() : bookname の値が引用符に囲まれていないとき : 対応する値を返すこと")
-    public void getBookName_BooknameValueDoesNotHaveQuotation_ReturnValue() {
-        final String EXPECTED = "hobopy";
-
-        String yamlString = String.format("bookname: %s", EXPECTED);
-        Config config = new Config(yamlString);
-
-        assertThat(config.getBookName()).isEqualTo(EXPECTED);
-    }
 
     @Test
     @DisplayName("getBookTitle() : booktitle の値が引用符に囲まれているとき : 対応する値を返すこと")

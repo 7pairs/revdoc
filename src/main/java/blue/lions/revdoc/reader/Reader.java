@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HASEBA, Junya
+ * Copyright 2019 HASEBA Junya
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import blue.lions.revdoc.ast.Node;
 import blue.lions.revdoc.reader.review.ReviewReader;
 
 /**
- * Readerのベースクラス。
+ * すべてのReaderのベースクラス。
  */
 public abstract class Reader {
 

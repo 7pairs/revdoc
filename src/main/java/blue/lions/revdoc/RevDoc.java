@@ -45,4 +45,11 @@ public class RevDoc {
     }
 
     // endregion
+
+    // region - Constructors.
+
+    /* コンストラクタを隠蔽する */
+    private RevDoc() {}
+
+    // endregion
 }

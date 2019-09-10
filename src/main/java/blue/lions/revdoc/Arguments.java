@@ -18,6 +18,8 @@ package blue.lions.revdoc;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * コマンドライン引数を格納するクラス。
@@ -38,6 +40,9 @@ public class Arguments {
     @Option(name = "-t", aliases = "--template")
     private String templateFilePath;
 
+    /* ロガー */
+    private static Logger logger = LoggerFactory.getLogger(Arguments.class);
+
     // endregion
 
     // region - Static methods.
@@ -57,8 +62,7 @@ public class Arguments {
         try {
             cmdLineParser.parseArgument(args);
         } catch (CmdLineException e) {
-            // ToDo: ログ出力する
-            e.printStackTrace();
+            logger.info("Failed to parse.", e);
         }
 
         // パース結果を返す
